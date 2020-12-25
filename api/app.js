@@ -1,38 +1,29 @@
 const express = require('express');
 const app = express();
-const dotenv = require("dotenv").config();
+
+require("dotenv").config();
 const port = process.env.PORT;
 const host = process.env.HOST;
-const fs = require('fs');
-const path = '.env';
 
-app.get('/', [
-  function (req, res, next) {
-    fs.access(path, fs.F_OK, (err) => {
-      if (err) {
-        console.log(`File ${path} not found`);
-        console.error(err);
-      }
+const defaultRoutes = require('./routes');
+const postsRoutes = require('./routes/posts');
+const userRoutes = require('./routes/user');
+const adminRoutes = require('./routes/admin');
+const notFoundRoutes = require('./routes/404');
 
-      console.log('Settings file found');
-      next();
-    });
-  },
-  function (req, res) {
-    res.send('Hello World!');
-  }
-]);
+// Routes:
+app.use(defaultRoutes);
+app.use(postsRoutes);
+app.use(userRoutes);
+app.use(adminRoutes);
+app.use(notFoundRoutes);
 
-// error handler - unknown url
-app.get('/*', (req, res) => {
-  res.status(404);
-
-  res.send({
-    error: 'Not found',
-    errorUrl: `${req.url}`
-  });
+// Error handling:
+app.use(function (err, req, res, next) {
+  res.send(500, 'Oops, something went wrong!');
 });
 
+// Start app:
 app.listen(port, host, () => {
-  console.log(`Server is listening at http://${host}:${port}`);
+    console.log(`Server is listening at http://${host}:${port}`);
 });
