@@ -11,31 +11,33 @@ function Render() {
     const [articleAdd, setArticleAdd] = useState(0);
     const [profile, setProfile] = useState(0);
 
-    const activeArticles = () => {
-        setArticles(1);
-        setArticleAdd(0);
-        setProfile(0);
+    const updateActive = (key) => {
+        resetActive();
+
+        switch (key) {
+            case 'articles':
+                setArticles(1);
+                break;
+            case 'articleAdd':
+                setArticleAdd(1);
+                break;
+            case 'profile':
+                setProfile(1);
+                break;
+            default:
+                setArticles(1);
+        }
     };
 
-    const activeArticleAdd = () => {
-        setArticles(0);
-        setArticleAdd(1);
-        setProfile(0);
-    };
-
-    const activeProfile = () => {
+    const resetActive = () => {
         setArticles(0);
         setArticleAdd(0);
-        setProfile(1);
+        setProfile(0);
     };
 
     return (
         <div>
-            <Header
-                activeArticles={activeArticles}
-                activeArticleAdd={activeArticleAdd}
-                activeProfile={activeProfile}
-            />
+            <Header updateActive={updateActive}/>
             <main>
                 {articles > 0 && <Articles/>}
                 {articleAdd > 0 && <ArticleAdd/>}

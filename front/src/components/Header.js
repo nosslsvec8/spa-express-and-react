@@ -1,10 +1,10 @@
-function Header({activeArticles, activeArticleAdd, activeProfile}) {
+function Header({updateActive}) {
     return (
         <header>
             <h2>Header</h2>
-            <button onClick={() => {activeArticles()}}>Articles</button>
-            <button onClick={() => {activeArticleAdd()}}>Add article</button>
-            <button onClick={() => {activeProfile()}}>Profile</button>
+            <button onClick={updateActiveArticles => updateActive('articles')}>Articles</button>
+            <button onClick={updateActiveAddArticle => updateActive('articleAdd')}>Add article</button>
+            <button onClick={updateActiveProfile => updateActive('profile')}>Profile</button>
         </header>
     )
 }
