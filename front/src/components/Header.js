@@ -1,14 +1,12 @@
-import React, { Component } from 'react';
-
-export default class Header extends Component {
-    render() {
-        return (
-            <header>
-                <h2>Header</h2>
-                <button onClick={() => { this.props.activeArticles()}}>Articles</button>
-                <button onClick={() => { this.props.activeArticleAdd()}}>Add article</button>
-                <button onClick={() => { this.props.activeProfile()}}>Profile</button>
-            </header>
-        )
-    }
+function Header({activeArticles, activeArticleAdd, activeProfile}) {
+    return (
+        <header>
+            <h2>Header</h2>
+            <button onClick={() => {activeArticles()}}>Articles</button>
+            <button onClick={() => {activeArticleAdd()}}>Add article</button>
+            <button onClick={() => {activeProfile()}}>Profile</button>
+        </header>
+    )
 }
+
+export default Header;

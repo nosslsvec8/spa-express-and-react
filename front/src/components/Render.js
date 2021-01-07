@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 import Header from "./Header";
 import './Header.css';
 import Footer from "./Footer";
@@ -6,56 +6,44 @@ import Articles from "./Articles";
 import ArticleAdd from "./ArticleAdd";
 import Profile from "./Profile";
 
-export default class Render extends Component {
-    constructor(props) {
-        super(props);
+function Render() {
+    const [articles, setArticles] = useState(1);
+    const [articleAdd, setArticleAdd] = useState(0);
+    const [profile, setProfile] = useState(0);
 
-        this.state = {
-            articles: true,
-            articleAdd: false,
-            profile: false
-        };
-    }
-
-    activeArticles = () => {
-        this.setState({
-            articles: true,
-            articleAdd: false,
-            profile: false,
-        })
+    const activeArticles = () => {
+        setArticles(1);
+        setArticleAdd(0);
+        setProfile(0);
     };
 
-    activeArticleAdd = () => {
-        this.setState({
-            articles: false,
-            articleAdd: true,
-            profile: false,
-        })
+    const activeArticleAdd = () => {
+        setArticles(0);
+        setArticleAdd(1);
+        setProfile(0);
     };
 
-    activeProfile = () => {
-        this.setState({
-            articles: false,
-            articleAdd: false,
-            profile: true,
-        })
+    const activeProfile = () => {
+        setArticles(0);
+        setArticleAdd(0);
+        setProfile(1);
     };
 
-    render() {
-        return (
-            <div>
-                <Header
-                    activeArticles={this.activeArticles}
-                    activeArticleAdd={this.activeArticleAdd}
-                    activeProfile={this.activeProfile}
-                />
-                <main>
-                    {this.state.articles && <Articles/>}
-                    {this.state.articleAdd && <ArticleAdd/>}
-                    {this.state.profile && <Profile/>}
-                </main>
-                <Footer/>
-            </div>
-        );
-    }
+    return (
+        <div>
+            <Header
+                activeArticles={activeArticles}
+                activeArticleAdd={activeArticleAdd}
+                activeProfile={activeProfile}
+            />
+            <main>
+                {articles > 0 && <Articles/>}
+                {articleAdd > 0 && <ArticleAdd/>}
+                {profile > 0 && <Profile/>}
+            </main>
+            <Footer/>
+        </div>
+    );
 }
+
+export default Render;
