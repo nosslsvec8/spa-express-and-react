@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const db = require('../services/db');
 
-router.get('/posts', (req, res) => {
-    res.send('Get all posts');
+router.get('/posts', async (req, res) => {
+    res.send(await db.select().from('posts'));
 });
 router.get('/posts/:id', (req, res) => {
     res.send(`Get ${req.params.id} post`);

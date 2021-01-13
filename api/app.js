@@ -2,8 +2,8 @@ const express = require('express');
 const app = express();
 
 require("dotenv").config();
-const port = process.env.PORT;
-const host = process.env.HOST;
+const port = process.env.WEB_PORT;
+const host = process.env.WEB_HOST;
 
 const defaultRoutes = require('./routes');
 const postsRoutes = require('./routes/posts');
