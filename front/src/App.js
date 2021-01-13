@@ -1,15 +1,8 @@
-import Header from './components/Header';
-import './components/Header.css';
-import Main from './components/Main';
-import Footer from './components/Footer';
+import Render from './components/Render';
 
 function App() {
   return (
-    <div className="App">
-      <Header/>
-      <Main/>
-      <Footer/>
-    </div>
+      <Render/>
   );
 }
 
