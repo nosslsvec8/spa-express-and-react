@@ -5,6 +5,7 @@ import Footer from "./Footer";
 import Articles from "./Articles";
 import ArticleAdd from "./ArticleAdd";
 import Profile from "./Profile";
+import ErrorBoundary from "./ErrorBoundary";
 
 function Render() {
     const [articles, setArticles] = useState(1);
@@ -39,9 +40,11 @@ function Render() {
         <div>
             <Header updateActive={updateActive}/>
             <main>
-                {articles > 0 && <Articles/>}
-                {articleAdd > 0 && <ArticleAdd/>}
-                {profile > 0 && <Profile/>}
+                <ErrorBoundary>
+                    {articles > 0 && <Articles/>}
+                    {articleAdd > 0 && <ArticleAdd/>}
+                    {profile > 0 && <Profile/>}
+                </ErrorBoundary>
             </main>
             <Footer/>
         </div>

@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 function Header({updateActive}) {
     return (
         <header>
@@ -8,5 +10,9 @@ function Header({updateActive}) {
         </header>
     )
 }
+
+Header.propTypes = {
+    updateActive: PropTypes.func.isRequired
+};
 
 export default Header;
