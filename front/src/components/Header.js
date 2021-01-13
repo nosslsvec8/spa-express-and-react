@@ -1,9 +1,18 @@
-import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
-export default class Header extends Component {
-    render() {
-        return(
-            <header>Header</header>
-        )
-    }
+function Header({updateActive}) {
+    return (
+        <header>
+            <h2>Header</h2>
+            <button onClick={updateActiveArticles => updateActive('articles')}>Articles</button>
+            <button onClick={updateActiveAddArticle => updateActive('articleAdd')}>Add article</button>
+            <button onClick={updateActiveProfile => updateActive('profile')}>Profile</button>
+        </header>
+    )
 }
+
+Header.propTypes = {
+    updateActive: PropTypes.func.isRequired
+};
+
+export default Header;
