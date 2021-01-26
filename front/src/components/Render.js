@@ -1,53 +1,65 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Header from "./Header";
 import './Header.css';
 import Footer from "./Footer";
 import Articles from "./Articles";
 import ArticleAdd from "./ArticleAdd";
 import Profile from "./Profile";
-import ErrorBoundary from "./ErrorBoundary";
+import {BrowserRouter, Route, Switch, Redirect} from "react-router-dom";
+import IsUrlDateNotLaterCurrent from "./IsUrlDateNotLaterCurrent";
 
 function Render() {
-    const [articles, setArticles] = useState(1);
-    const [articleAdd, setArticleAdd] = useState(0);
-    const [profile, setProfile] = useState(0);
-
-    const updateActive = (key) => {
-        resetActive();
-
-        switch (key) {
-            case 'articles':
-                setArticles(1);
-                break;
-            case 'articleAdd':
-                setArticleAdd(1);
-                break;
-            case 'profile':
-                setProfile(1);
-                break;
-            default:
-                setArticles(1);
-        }
-    };
-
-    const resetActive = () => {
-        setArticles(0);
-        setArticleAdd(0);
-        setProfile(0);
-    };
-
     return (
-        <div>
-            <Header updateActive={updateActive}/>
-            <main>
-                <ErrorBoundary>
-                    {articles > 0 && <Articles/>}
-                    {articleAdd > 0 && <ArticleAdd/>}
-                    {profile > 0 && <Profile/>}
-                </ErrorBoundary>
-            </main>
+        <BrowserRouter>
+            <Header/>
+
+            <Switch>
+                <Route exact path="/articles">
+                    <Articles/>
+                </Route>
+                <Route exact path="/articleAdd">
+                    <ArticleAdd/>
+                </Route>
+                <Route exact path="/profile">
+                    <Profile/>
+                </Route>
+
+                <Route exact path="/users">
+                    /users
+                </Route>
+                <Route exact path="/users/(\d+)">
+                    /users/(\d+)
+                </Route>
+                <Route exact path="/users/(\d+)">
+                    /users/:id
+                </Route>
+                <Route exact path="/users/(\d+)/edit">
+                    /users/:id/edit
+                </Route>
+                <Route exact path="/users/(\d+)/avatar">
+                    /users/:id/avatar
+                </Route>
+                <Route exact path="/users/(\d+)/avatar/edit">
+                    /users/:id/avatar/edit
+                </Route>
+                <Route exact path="/users/(\d+)/avatar/delete">
+                    /users/:id/avatar/delete
+                </Route>
+
+                <Route exact
+                     path="/users/(\d+)/file/(\d+)-(\w{1,10})-(\d{4})-(0[0-9]|[1][0-2])-([0-2][0-9]|3[0-1]).(docx|jpeg|pdf|txt)/v.(\d{1}).(\d{1}).(\d{1})"
+                >
+                    {(IsUrlDateNotLaterCurrent()) ? '/users/1/file/XXX-YYY-2020-01-20.FFF/v.Z.Z.Z' : <Redirect to="/articles"/>}
+                </Route>
+
+                <Redirect from="/" to="/articles"/>
+                <Route exact path="**">
+                    <Articles/>
+                </Route>
+            </Switch>
+
             <Footer/>
-        </div>
+        </BrowserRouter>
     );
 }
 
