@@ -1,18 +1,16 @@
-import PropTypes from 'prop-types';
+import {Link} from "react-router-dom";
 
-function Header({updateActive}) {
+function Header() {
     return (
         <header>
             <h2>Header</h2>
-            <button onClick={updateActiveArticles => updateActive('articles')}>Articles</button>
-            <button onClick={updateActiveAddArticle => updateActive('articleAdd')}>Add article</button>
-            <button onClick={updateActiveProfile => updateActive('profile')}>Profile</button>
+            <nav>
+                <Link to={"/articles"}>Articles</Link>
+                <Link to={"/articleAdd"}>Add article</Link>
+                <Link to={"/profile"}>Profile</Link>
+            </nav>
         </header>
     )
 }
-
-Header.propTypes = {
-    updateActive: PropTypes.func.isRequired
-};
 
 export default Header;
