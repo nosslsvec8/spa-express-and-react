@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
-const passport = require('./services/passport');
-const authRequest = require('./middleware/request-auth');
+const passport = require('passport');
 
 require("dotenv").config();
 const port = process.env.WEB_PORT;
@@ -16,12 +15,10 @@ const notFoundRoutes = require('./routes/404');
 
 app.use(express.json());
 app.use(passport.initialize());
-app.use(authRequest);
-
+require('./services/passport')(passport);
 
 // dev modification
 // app.use(require('morgan')('dev'));
-
 
 // Routes:
 app.use(defaultRoutes);
@@ -33,7 +30,8 @@ app.use(notFoundRoutes);
 
 // Error handling:
 app.use(function (err, req, res, next) {
-  res.send(500, 'Oops, something went wrong!');
+    console.log('err: ', err);
+    res.send(500, 'Oops, something went wrong!');
 });
 
 // Start app:

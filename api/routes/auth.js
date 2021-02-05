@@ -1,14 +1,14 @@
 const router = require('express').Router();
-const passport = require('../services/passport');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { v4: uuidv4 } = require('uuid');
 
 router.post('/auth/register', async (req, res, next) => {
     const {email, password, name} = req.body;
 
-    notEmpty(!email.trim(), 'Enter email');
-    notEmpty(!password.trim(), 'Enter password');
-    notEmpty(!name.trim(), 'Enter name');
+    checkEmptyValue(email.trim(), 'Email value cannot be empty');
+    checkEmptyValue(password.trim(), 'Password value cannot be empty');
+    checkEmptyValue(name.trim(), 'Name value cannot be empty');
 
     const userInDb = await User.findByEmail(email.trim());
 
@@ -24,30 +24,36 @@ router.post('/auth/register', async (req, res, next) => {
     }
 });
 
-router.post('/auth/login', (req, res) =>
-    passport.authenticate(
-        'local',
-        {
-            usernameField: 'email',
-            passwordField: 'password',
-            session: false,
-        },
-        async (err, user, trace) => {
-            if (err || !user) {
-                throw new Error(trace.message || 'Authentication error');
-            }
+router.post('/auth/login', async (req, res) => {
+    const {email, password} = req.body;
 
-            // Generate token for user and actualize:
-            user.token = uuidv4();
-            await User.updateUser(user);
+    checkEmptyValue(email.trim(), 'Email value cannot be empty');
+    checkEmptyValue(password.trim(), 'Password value cannot be empty');
 
-            res.send({ token: user.token });
-        },
-)(req, res),
-);
+    const userInDb = await User.findByEmail(email.trim());
 
-function notEmpty(value, ErrorText) {
-    return (!value) ? 1 : res.status(400).send(ErrorText);
+    if (userInDb.length === 0) {
+        return res.status(404).send('This email not found');
+    } else {
+        const passwordResult = bcrypt.compareSync(password, userInDb[0].password);
+
+        if (passwordResult) {
+            const jwtKey = process.env.JwtKey;
+            const token = jwt.sign({
+                email: userInDb[0].email,
+                id: userInDb[0].id,
+            }, jwtKey, {expiresIn: 60*60*24});
+
+            await User.updateToken(userInDb[0].id, token);
+            return res.status(200).send('Authorization was successful');
+        } else {
+            return res.status(401).send('Passwords do not match');
+        }
+    }
+});
+
+function checkEmptyValue(value, ErrorText) {
+    return (value) ? 1 : res.status(400).send(ErrorText);
 }
 
 module.exports = router;
