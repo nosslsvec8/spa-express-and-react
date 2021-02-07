@@ -1,16 +1,15 @@
 const db = require('../services/db');
 const bcrypt = require('bcrypt');
-const tableName = process.env.DB_UserTableName;
 
 class User {
-    // static tableName = 'users';
+    static tableName = process.env.DB_UserTableName;
 
     static async updateUser(user) {
-        return db.select().from(tableName).where('id', '=', user.id).update({ email: user.email, password: user.password, token: user.token });
+        return db.select().from(this.tableName).where('id', '=', user.id).update({ email: user.email, password: user.password, token: user.token });
     }
 
     static async deleteUser(email) {
-        return db.select().from(tableName).where('email', '=', email).delete();
+        return db.select().from(this.tableName).where('email', '=', email).delete();
     }
 
     static async createUser(email, password, name) {
@@ -20,7 +19,7 @@ class User {
         // checking if users are in the database
         (lastId.length === 0) ? newID = 1 : newID = lastId[lastId.length - 1].id + 1;
 
-        return db.select().from(tableName).insert({
+        return db.select().from(this.tableName).insert({
             id: newID,
             name: name,
             email: email,
@@ -30,31 +29,31 @@ class User {
     }
 
     static async updateToken(id, token) {
-        return db.select().from(tableName).where( 'id', '=', id).update({ token: token });
+        return db.select().from(this.tableName).where( 'id', '=', id).update({ token: token });
     }
 
     static async findByToken(token) {
-        return db.select().from(tableName).where({ token }).first();
+        return db.select().from(this.tableName).where({ token }).first();
     }
 
     static async findByEmail(userEmail) {
-        return db.select().from(tableName).where({ email: userEmail });
+        return db.select().from(this.tableName).where({ email: userEmail });
     }
 
     static async findByName(userName) {
-        return db.select().from(tableName).where({ name: userName }).first();
+        return db.select().from(this.tableName).where({ name: userName }).first();
     }
 
     static async findById(userID) {
-        return db.select().from(tableName).where({ id: userID });
+        return db.select().from(this.tableName).where({ id: userID });
     }
 
     static async getLastID() {
-        return db.select('id').from(tableName);
+        return db.select('id').from(this.tableName);
     }
 
     static async getAllUsers() {
-        return db.select().from(tableName);
+        return db.select().from(this.tableName);
     }
 }
 

@@ -1,24 +1,22 @@
-const express = require('express');
-const router = express.Router();
-const db = require('../services/db');
+const router = require('express').Router();
 const passport = require('passport');
-const checkAuthorPost = require('../middleware/checkAuthorPost');
+const Post = require('../models/post');
+const checkAuthor = require('../middleware/checkAuthor');
 const checkAuth = passport.authenticate('jwt', {session: false});
-const tableName = process.env.DB_PostTableName;
 
-router.get('/posts || /post', async (req, res) => {
-    res.send(await db.select().from(tableName));
+router.get("(/post|/posts)", async (req, res) => {
+    res.send(await Post.getAllPost());
 });
-router.get("/posts/:id || /post/:id", async (req, res) => {
-    res.send(await db.select().from(tableName).where({id: req.params.id}));
+router.get("(/post/:id|/posts/:id)", async (req, res) => {
+    res.send(await Post.findById(req.params.id));
 });
 router.post('/posts', [checkAuth, (req, res) => {
     res.send('Create post');
 }]);
-router.put('/posts/:id', [checkAuth, checkAuthorPost, async (req, res) => {
+router.put("(/post/:id|/posts/:id)", [checkAuth, checkAuthor({table: Post.tableName, column: 'userId'}), async (req, res) => {
     res.send(`Update ${req.params.id} post`);
 }]);
-router.delete('/posts/:id', [checkAuth, checkAuthorPost, async (req, res) => {
+router.delete("(/post/:id|/posts/:id)", [checkAuth, checkAuthor({table: Post.tableName, column: 'userId'}), async (req, res) => {
     res.send(`Update ${req.params.id} post`);
 }]);
 

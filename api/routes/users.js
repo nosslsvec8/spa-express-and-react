@@ -1,10 +1,9 @@
-const express = require('express');
-const router = express.Router();
-const User = require('../models/user');
+const router = require('express').Router();
 const passport = require('passport');
+const User = require('../models/user');
 const checkAuth = passport.authenticate('jwt', {session: false});
 
-router.get("/user || /users", async (req, res) => {
+router.get("(/user|/users)", async (req, res) => {
     res.send(await User.getAllUsers());
 });
 router.post('/user', (req, res) => {
@@ -13,7 +12,7 @@ router.post('/user', (req, res) => {
 router.put('/user', (req, res) => {
     res.send('Update user');
 });
-router.delete('/user', [checkAuth, async (req, res) => {
+router.delete('(/user/:id|/users/:id)', [checkAuth, async (req, res) => {
     try {
         await User.deleteUser(req.body.email);
         res.status(410).send('User deleted');

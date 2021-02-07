@@ -9,7 +9,7 @@ const host = process.env.WEB_HOST;
 const defaultRoutes = require('./routes');
 const authRoutes = require('./routes/auth');
 const postsRoutes = require('./routes/posts');
-const userRoutes = require('./routes/user');
+const userRoutes = require('./routes/users');
 const adminRoutes = require('./routes/admin');
 const notFoundRoutes = require('./routes/404');
 
@@ -18,7 +18,7 @@ app.use(passport.initialize());
 require('./services/passport')(passport);
 
 // dev modification
-// app.use(require('morgan')('dev'));
+app.use(require('morgan')('dev'));
 
 // Routes:
 app.use(defaultRoutes);
