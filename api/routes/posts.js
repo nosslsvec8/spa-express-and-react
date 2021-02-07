@@ -1,21 +1,23 @@
-const express = require('express');
-const router = express.Router();
-const db = require('../services/db');
+const router = require('express').Router();
+const passport = require('passport');
+const Post = require('../models/post');
+const checkAuthor = require('../middleware/checkAuthor');
+const checkAuth = passport.authenticate('jwt', {session: false});
 
-router.get('/posts', async (req, res) => {
-    res.send(await db.select().from('posts'));
+router.get("(/post|/posts)", async (req, res) => {
+    res.send(await Post.getAllPost());
 });
-router.get('/posts/:id', (req, res) => {
-    res.send(`Get ${req.params.id} post`);
+router.get("(/post/:id|/posts/:id)", async (req, res) => {
+    res.send(await Post.findById(req.params.id));
 });
-router.post('/posts', (req, res) => {
+router.post('/posts', [checkAuth, (req, res) => {
     res.send('Create post');
-});
-router.put('/posts/:id', (req, res) => {
+}]);
+router.put("(/post/:id|/posts/:id)", [checkAuth, checkAuthor({table: Post.tableName, column: 'userId'}), async (req, res) => {
     res.send(`Update ${req.params.id} post`);
-});
-router.delete('/posts/:id', (req, res) => {
-    res.send(`Delete ${req.params.id} post`);
-});
+}]);
+router.delete("(/post/:id|/posts/:id)", [checkAuth, checkAuthor({table: Post.tableName, column: 'userId'}), async (req, res) => {
+    res.send(`Update ${req.params.id} post`);
+}]);
 
 module.exports = router;
