@@ -4,9 +4,9 @@ module.exports = function ({table, column}) {
     return async function (req, res, next) {
         if (req.user) {
             const userId = req.user[0].id;
-            const post = await db.select().from(table).where(column, '=', req.params.id);
+            const post = await db.select().from(table).where('id', '=', req.params.id);
 
-            if (+userId === +post[0].userId) {
+            if (+userId === +post[0][column]) {
                 next();
             } else {
                 next('Access denied. You are not the author of the post');
