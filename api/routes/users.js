@@ -9,9 +9,21 @@ router.get("(/user|/users)", async (req, res) => {
 router.post('/user', (req, res) => {
     res.send('Create user');
 });
-router.put('/user', (req, res) => {
-    res.send('Update user');
-});
+router.put('/user/:id|/users/:id', [checkAuth, async (req, res) => {
+    const user = await User.findById(req.params.id);
+    const newPassword = req.body.password;
+
+    if (user[0] !== undefined) {
+        try {
+            await User.updateUserPassword(user[0].id, newPassword);
+            res.status(200).send('User password updated');
+        } catch (error) {
+            return res.status(400).send(`Updated error - ${error}`);
+        }
+    } else {
+        return res.status(400).send('User with this number was not found');
+    }
+}]);
 router.delete('(/user/:id|/users/:id)', [checkAuth, async (req, res) => {
     try {
         await User.deleteUser(req.body.email);

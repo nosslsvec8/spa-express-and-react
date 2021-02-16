@@ -5,7 +5,17 @@ class User {
     static tableName = process.env.DB_UserTableName;
 
     static async updateUser(user) {
-        return db.select().from(this.tableName).where('id', '=', user.id).update({ email: user.email, password: user.password, token: user.token });
+        return db.select().from(this.tableName).where('id', '=', user.id).update({
+            email: user.email,
+            password: bcrypt.hashSync(user.password, 10),
+            token: user.token
+        });
+    }
+
+    static async updateUserPassword(id, password) {
+        return db.select().from(this.tableName).where('id', '=', id).update({
+            password: bcrypt.hashSync(password, 10)
+        });
     }
 
     static async deleteUser(email) {
@@ -44,8 +54,8 @@ class User {
         return db.select().from(this.tableName).where({ name: userName }).first();
     }
 
-    static async findById(userID) {
-        return db.select().from(this.tableName).where({ id: userID });
+    static async findById(userId) {
+        return db.select().from(this.tableName).where({ id: userId });
     }
 
     static async getLastID() {

@@ -24,6 +24,29 @@ router.post('/auth/register', async (req, res, next) => {
     }
 });
 
+router.post('/register/social', async (req, res) => {
+    const {email, id, name} = req.body.profile;
+
+    checkEmptyValue(email.trim(), 'Email value cannot be empty');
+    checkEmptyValue(id.trim(), 'Password value cannot be empty');
+    checkEmptyValue(name.trim(), 'Name value cannot be empty');
+
+    const userInDb = await User.findByEmail(email.trim());
+
+    if (userInDb.length === 0) {
+        try {
+            await User.createUser(email, id, name);
+            res.status(201).send('Registration completed successfully');
+        } catch (error) {
+            return next(res.status(400).send(`Registration error - ${error}`));
+        }
+    } else {
+        return res.status(400).send('This email already exists');
+    }
+
+    res.send({body: req.body});
+});
+
 router.post('/auth/login', async (req, res) => {
     const {email, password} = req.body;
 
