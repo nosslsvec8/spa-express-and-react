@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const passport = require('passport');
 const User = require('../models/user');
+const checkAuthor = require('../middleware/checkAuthor');
 const checkAuth = passport.authenticate('jwt', {session: false});
 
 router.get("(/user|/users)", async (req, res) => {
@@ -9,7 +10,7 @@ router.get("(/user|/users)", async (req, res) => {
 router.post('/user', (req, res) => {
     res.send('Create user');
 });
-router.put('/user/:id|/users/:id', [checkAuth, async (req, res) => {
+router.put('/user/:id|/users/:id', [checkAuth, checkAuthor({table: User.tableName, column: 'id'}), async (req, res) => {
     const user = await User.findById(req.params.id);
     const newPassword = req.body.password;
 
@@ -24,7 +25,7 @@ router.put('/user/:id|/users/:id', [checkAuth, async (req, res) => {
         return res.status(400).send('User with this number was not found');
     }
 }]);
-router.delete('(/user/:id|/users/:id)', [checkAuth, async (req, res) => {
+router.delete('(/user/:id|/users/:id)', [checkAuth, checkAuthor({table: User.tableName, column: 'id'}), async (req, res) => {
     try {
         await User.deleteUser(req.body.email);
         res.status(410).send('User deleted');
