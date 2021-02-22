@@ -18,14 +18,13 @@ module.exports = function (checkPermissionsArr) {
                         let databaseQueryResult = await db.select().from(rule.table).where('id', '=', req.params.id);
                         if (+databaseQueryResult[0][rule.column] === currentUser.id) {
                             return next();
-                        } else {
-                            next('Access denied. You are not the author of the post!');
                         }
                     } else {
                         return next();
                     }
                 }
             }
+            next('Access denied. You are not the author of the post!');
         } else {
             next('Access denied');
         }
