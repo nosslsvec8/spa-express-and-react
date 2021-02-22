@@ -1,12 +1,12 @@
 import React from 'react';
+import {BrowserRouter, Route, Switch, Redirect} from "react-router-dom";
 import Header from "./Header";
 import './Header.css';
 import Footer from "./Footer";
-import Articles from "./Articles";
+import PostsList from "../containers/PostsListContainer";
 import ArticleAdd from "./ArticleAdd";
 import Profile from "./Profile";
 import User from "./User";
-import {BrowserRouter, Route, Switch, Redirect} from "react-router-dom";
 
 function Render() {
     return (
@@ -15,7 +15,7 @@ function Render() {
 
             <Switch>
                 <Route exact path="/articles">
-                    <Articles/>
+                    <PostsList/>
                 </Route>
                 <Route exact path="/articleAdd">
                     <ArticleAdd/>
@@ -38,7 +38,7 @@ function Render() {
 
                 <Redirect from="/" to="/articles"/>
                 <Route exact path="**">
-                    <Articles/>
+                    <PostsList/>
                 </Route>
             </Switch>
 
