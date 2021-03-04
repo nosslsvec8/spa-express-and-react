@@ -1,18 +1,21 @@
-import React, {useState, useEffect} from 'react';
-import PostsList from '../components/PostsList';
-import {getPosts} from "./hooks/crud";
+import React, {useState} from 'react';
+import {useQuery} from 'react-query';
+import PostsList from '../components/Posts/PostsList';
+import {getPosts, getCountPosts} from "./hooks/crud";
 
 function PostsListContainer() {
-    const [posts, setPosts] = useState([]);
-    const getData = async () => {
-        const {data} = await getPosts();
-        setPosts(data);
+    const [limit, setLimit] = useState(5);
+    const {data: response, isFetching} = useQuery(['posts', limit], () => getPosts(limit));
+    const {data: count} = useQuery('countPosts', () => getCountPosts());
+    const posts = response?.data || [];
+    const countPosts = count?.data[0]?.count || [];
+
+    const onLoadMore = () => {
+        setLimit(limit + 5);
     };
 
-    useEffect(getData, []);
-
     return (
-        <PostsList posts={posts} />
+        <PostsList posts={posts} isFetching={isFetching} onLoadMore={onLoadMore} countPosts={countPosts}/>
     );
 }
 

@@ -6,7 +6,7 @@ function Header() {
             <h2>Header</h2>
             <nav>
                 <Link to={"/articles"}>Articles</Link>
-                <Link to={"/articleAdd"}>Add article</Link>
+                <Link to={"/new-article"}>Add article</Link>
                 <Link to={"/profile"}>Profile</Link>
             </nav>
         </header>
