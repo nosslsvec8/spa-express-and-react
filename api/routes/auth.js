@@ -2,8 +2,13 @@ const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const validator = require('../middleware/validator');
 
-router.post('/auth/register', async (req, res, next) => {
+router.post('/auth/register', validator({
+    email: ['required', 'email', `unique:${User.tableName}:create`],
+    password: ['required', 'min:6', 'max:60'],
+    name: ['required', 'min:2', 'max:125']
+}), async (req, res, next) => {
     const {email, password, name} = req.body;
 
     checkEmptyValue(email.trim(), 'Email value cannot be empty');
@@ -47,7 +52,10 @@ router.post('/register/social', async (req, res) => {
     res.send({body: req.body});
 });
 
-router.post('/auth/login', async (req, res) => {
+router.post('/auth/login', validator({
+    email: ['required'],
+    password: ['required']
+}), async (req, res) => {
     const {email, password} = req.body;
 
     checkEmptyValue(email.trim(), 'Email value cannot be empty');
@@ -65,7 +73,7 @@ router.post('/auth/login', async (req, res) => {
             const token = jwt.sign({
                 email: userInDb[0].email,
                 id: userInDb[0].id,
-            }, jwtKey, {expiresIn: 60*60*24});
+            }, jwtKey, {expiresIn: 60 * 60 * 24});
 
             await User.updateToken(userInDb[0].id, token);
             return res.status(200).send('Authorization was successful');

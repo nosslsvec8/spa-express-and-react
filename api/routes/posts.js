@@ -3,6 +3,7 @@ const passport = require('passport');
 const Post = require('../models/post');
 const checkAcl = require('../middleware/checkAcl');
 const checkAuth = passport.authenticate('jwt', {session: false});
+const validator = require('../middleware/validator');
 
 router.get("(/post|/posts)", async (req, res) => {
     res.send(await Post.getAllPost());
@@ -10,9 +11,15 @@ router.get("(/post|/posts)", async (req, res) => {
 router.get("(/post/:id|/posts/:id)", async (req, res) => {
     res.send(await Post.findById(req.params.id));
 });
-router.post('/posts', [checkAuth, (req, res) => {
-    res.send('Create post');
-}]);
+router.post('/posts', [
+    validator({
+        title: ['required', 'min:6', 'max:125'],
+        text: ['required', 'min:10'],
+    }),
+    checkAuth, (req, res) => {
+        res.send('Create post');
+    }]
+);
 router.put("(/post/:id|/posts/:id)", [checkAuth, checkAcl([
     {permission: "updateAnyPost"},
     {permission: "updateOwnPost", checkAuthor: true, table: Post.tableName, column: 'userId'}
