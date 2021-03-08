@@ -3,8 +3,8 @@ const db = require('../services/db');
 module.exports = function validator(validatorSchemaArr) {
     return async (req, res, next) => {
         const errors = [];
-        Object.entries(validatorSchemaArr).forEach(([fieldName, rules]) => {
-            rules.forEach(rule => {
+        for (const [fieldName, rules] of Object.entries(validatorSchemaArr)) {
+            for (const rule of rules) {
                 const [ruleName, ...ruleParams] = rule.split(':');
                 switch (ruleName) {
                     case 'required':
@@ -45,38 +45,25 @@ module.exports = function validator(validatorSchemaArr) {
                             }
                         }
                         break;
-                    default:
-                }
-            })
-        });
+                    case 'unique':
+                        const findInDatabase = await db.select().from(ruleParams[0]).where({[fieldName]: req.body[fieldName]});
+                        if (ruleParams[1] === 'create' && findInDatabase.length) {
+                            errors.push({
+                                [fieldName]: `${fieldName}: such a value already exists! Try something else.`
+                            });
+                        }
 
-        for (const [fieldName, rules] of Object.entries(validatorSchemaArr)) {
-            for (const rule of rules) {
-                const [ruleName, ...ruleParams] = rule.split(':');
-                if (ruleName === 'unique') {
-                    switch (ruleParams[1]) {
-                        case 'create':
-                            const findByEmailForCreate = await db.select().from(ruleParams[0]).where({email: req.body[fieldName]});
-                            if (findByEmailForCreate.length) {
-                                errors.push({
-                                    [fieldName]: `${fieldName}: such a value already exists! Try something else.`
-                                });
-                            }
-                            break;
-                        case 'update':
-                            const currentUser = req.user[0];
-                            const findByEmail = await db.select().from(ruleParams[0]).where({email: req.body[fieldName]});
-                            if (findByEmail.length && currentUser.email !== findByEmail[0].email) {
-                                errors.push({
-                                    [fieldName]: `${fieldName}: such a value already exists! Try something else.`
-                                });
-                            }
-                            break;
-                        default:
-                    }
+                        if (ruleParams[1] === 'update' && findInDatabase.length && req.user[0][fieldName] !== req.body[fieldName]) {
+                            errors.push({
+                                [fieldName]: `${fieldName}: such a value already exists! Try something else.`
+                            });
+                        }
+                        break;
+                    default:
                 }
             }
         }
+
         if (!errors.length) {
             return next();
         }
