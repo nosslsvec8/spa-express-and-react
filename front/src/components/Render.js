@@ -4,9 +4,8 @@ import {QueryClient, QueryClientProvider} from 'react-query';
 import Header from "./Header/Header";
 import './Header/Header.css';
 import Footer from "./Footer/Footer";
+import Post from "../containers/PostContainer";
 import PostsList from "../containers/PostsListContainer";
-import PostCreate from "../containers/PostCreateContainer";
-import PostEdit from "../containers/PostEditContainer";
 import Profile from "./Profile";
 import User from "./User";
 
@@ -22,11 +21,8 @@ function Render() {
                     <Route exact path="/articles">
                         <PostsList/>
                     </Route>
-                    <Route exact path="/new-article">
-                        <PostCreate/>
-                    </Route>
-                    <Route exact path={"/article/(\\d+)/edit"}>
-                        <PostEdit/>
+                    <Route exact path={"/article/(\\d+)"}>
+                        <Post/>
                     </Route>
                     <Route exact path="/profile">
                         <Profile/>
