@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router';
 import {Redirect} from "react-router-dom";
-import IsUrlDateNotLaterCurrent from "./IsUrlDateNotLaterCurrent";
+import IsUrlDateNotLaterCurrent from "../services/IsUrlDateNotLaterCurrent";
 
 function User() {
     const location = useLocation();
