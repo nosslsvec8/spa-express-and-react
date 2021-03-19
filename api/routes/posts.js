@@ -1,21 +1,36 @@
-const express = require('express');
-const router = express.Router();
-const db = require('../services/db');
+const router = require('express').Router();
+const passport = require('passport');
+const Post = require('../models/post');
+const checkAcl = require('../middleware/checkAcl');
+const checkAuth = passport.authenticate('jwt', {session: false});
+const validator = require('../middleware/validator');
 
-router.get('/posts', async (req, res) => {
-    res.send(await db.select().from('posts'));
+router.get("(/post|/posts)", async (req, res) => {
+    res.send(await Post.getAllPost());
 });
-router.get('/posts/:id', (req, res) => {
-    res.send(`Get ${req.params.id} post`);
+router.get("(/post/:id|/posts/:id)", async (req, res) => {
+    res.send(await Post.findById(req.params.id));
 });
-router.post('/posts', (req, res) => {
-    res.send('Create post');
-});
-router.put('/posts/:id', (req, res) => {
+router.post('/posts', [
+    validator({
+        title: ['required', 'min:6', 'max:125'],
+        text: ['required', 'min:10'],
+    }),
+    checkAuth, (req, res) => {
+        res.send('Create post');
+    }]
+);
+router.put("(/post/:id|/posts/:id)", [checkAuth, checkAcl([
+    {permission: "updateAnyPost"},
+    {permission: "updateOwnPost", checkAuthor: true, table: Post.tableName, column: 'userId'}
+]), async (req, res) => {
     res.send(`Update ${req.params.id} post`);
-});
-router.delete('/posts/:id', (req, res) => {
+}]);
+router.delete("(/post/:id|/posts/:id)", [checkAuth, checkAcl([
+    {permission: "deleteAnyPost"},
+    {permission: "deleteOwnPost", checkAuthor: true, table: Post.tableName, column: 'userId'}
+]), async (req, res) => {
     res.send(`Delete ${req.params.id} post`);
-});
+}]);
 
 module.exports = router;

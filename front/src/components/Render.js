@@ -1,53 +1,54 @@
-import React, {useState} from 'react';
-import Header from "./Header";
-import './Header.css';
-import Footer from "./Footer";
-import Articles from "./Articles";
-import ArticleAdd from "./ArticleAdd";
+import React from 'react';
+import {BrowserRouter, Route, Switch, Redirect} from "react-router-dom";
+import {QueryClient, QueryClientProvider} from 'react-query';
+import Header from "./Header/Header";
+import './Header/Header.css';
+import Footer from "./Footer/Footer";
+import Post from "../containers/PostContainer";
+import PostsList from "../containers/PostsListContainer";
 import Profile from "./Profile";
-import ErrorBoundary from "./ErrorBoundary";
+import User from "./User";
+
+const queryClient = new QueryClient();
 
 function Render() {
-    const [articles, setArticles] = useState(1);
-    const [articleAdd, setArticleAdd] = useState(0);
-    const [profile, setProfile] = useState(0);
-
-    const updateActive = (key) => {
-        resetActive();
-
-        switch (key) {
-            case 'articles':
-                setArticles(1);
-                break;
-            case 'articleAdd':
-                setArticleAdd(1);
-                break;
-            case 'profile':
-                setProfile(1);
-                break;
-            default:
-                setArticles(1);
-        }
-    };
-
-    const resetActive = () => {
-        setArticles(0);
-        setArticleAdd(0);
-        setProfile(0);
-    };
-
     return (
-        <div>
-            <Header updateActive={updateActive}/>
-            <main>
-                <ErrorBoundary>
-                    {articles > 0 && <Articles/>}
-                    {articleAdd > 0 && <ArticleAdd/>}
-                    {profile > 0 && <Profile/>}
-                </ErrorBoundary>
-            </main>
-            <Footer/>
-        </div>
+        <QueryClientProvider client={queryClient}>
+            <BrowserRouter>
+                <Header/>
+
+                <Switch>
+                    <Route exact path="/articles">
+                        <PostsList/>
+                    </Route>
+                    <Route exact path={"/article/(\\d+)"}>
+                        <Post/>
+                    </Route>
+                    <Route exact path="/profile">
+                        <Profile/>
+                    </Route>
+
+                    <Route exact path={[
+                        "/users",
+                        "/users/(\\d+)",
+                        "/users/(\\d+)/edit",
+                        "/users/(\\d+)/avatar",
+                        "/users/(\\d+)/avatar/edit",
+                        "/users/(\\d+)/avatar/delete",
+                        "/users/(\\d+)/file/(\\d+)-(\\w{1,10})-(\\d{4})-(0[0-9]|[1][0-2])-([0-2][0-9]|3[0-1]).(docx|jpeg|pdf|txt)/v.(\\d{1}).(\\d{1}).(\\d{1})",
+                    ]}>
+                        <User/>
+                    </Route>
+
+                    <Redirect from="/" to="/articles"/>
+                    <Route exact path="**">
+                        <PostsList/>
+                    </Route>
+                </Switch>
+
+                <Footer/>
+            </BrowserRouter>
+        </QueryClientProvider>
     );
 }
 

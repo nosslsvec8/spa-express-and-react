@@ -1,0 +1,8 @@
+header {
+    text-align: center;
+}
+
+header nav a{
+    text-decoration: blink;
+    padding: 5px 15px;
+}
