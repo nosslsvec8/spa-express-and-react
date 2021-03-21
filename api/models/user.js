@@ -22,7 +22,7 @@ class User {
         return db.select().from(this.tableName).where('email', '=', email).delete();
     }
 
-    static async createUser(email, password, name) {
+    static async createUser(email, password, name, avatarLink) {
         let lastId = await User.getLastID();
         let newID;
 
@@ -34,7 +34,8 @@ class User {
             name: name,
             email: email,
             password: bcrypt.hashSync(password, 10),
-            token: ''
+            token: '',
+            avatarLink: avatarLink
         });
     }
 
@@ -64,6 +65,10 @@ class User {
 
     static async getAllUsers() {
         return db.select().from(this.tableName);
+    }
+
+    static async getAvatar(id) {
+        return db.select('avatarLink').from(this.tableName).where({id: id});
     }
 }
 

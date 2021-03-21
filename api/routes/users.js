@@ -16,6 +16,11 @@ router.post('/user', [checkAuth, checkAcl([
 }), (req, res) => {
     res.send('Create user');
 }]);
+router.get('/uploads/:path([\\w\\W]+)', (req, res) => {
+    const {params: {path}} = req;
+    const response = `<img src="/${path}" alt="123"/>`;
+    res.send(response);
+});
 router.put("(/user/:id|/users/:id)", [checkAuth, checkAcl([
     {permission: "updateAnyUser"},
     {permission: "updateOwnUser", checkAuthor: true, table: User.tableName, column: 'id'}

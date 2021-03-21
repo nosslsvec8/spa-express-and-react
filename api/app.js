@@ -1,5 +1,7 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
+const bodyParser = require('body-parser');
 const passport = require('passport');
 
 require("dotenv").config();
@@ -14,11 +16,11 @@ const adminRoutes = require('./routes/admin');
 const notFoundRoutes = require('./routes/404');
 
 app.use(express.json());
+app.use(cors());
+app.use(bodyParser.json());
 app.use(passport.initialize());
 require('./services/passport')(passport);
-
-// dev modification
-app.use(require('morgan')('dev'));
+app.use(express.static('uploads'));
 
 // Routes:
 app.use(defaultRoutes);

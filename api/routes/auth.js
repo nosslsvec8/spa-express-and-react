@@ -3,13 +3,38 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const validator = require('../middleware/validator');
+const multer = require('multer');
+const fs = require('fs');
 
-router.post('/auth/register', validator({
+const storage = multer.diskStorage({
+    destination: `${__dirname}/..\\uploads`,
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + Date.now())
+    }
+});
+
+let upload = multer({storage: storage});
+
+router.post('/auth/register', upload.single('avatar'), validator({
     email: ['required', 'email', `unique:${User.tableName}:create`],
     password: ['required', 'min:6', 'max:60'],
     name: ['required', 'min:2', 'max:125']
 }), async (req, res, next) => {
     const {email, password, name} = req.body;
+    const fileExtensionStr = req.file?.originalname.split('.')[1];
+    const basePathAvatar = `${req.file?.path}`;
+    let avatarLink = `${basePathAvatar}.${fileExtensionStr}`;
+
+    try {
+        if (fileExtensionStr !== 'jpg' && fileExtensionStr !== 'png') {
+            return next(res.status(400).send(`Registration error - an avatar can only be an image`));
+        }
+        if (fs.existsSync(`${basePathAvatar}`)) {
+            fs.renameSync(`${basePathAvatar}`, `${avatarLink}`);
+        }
+    } catch(err) {
+        return next(res.status(400).send(`Registration error - ${error}`));
+    }
 
     checkEmptyValue(email.trim(), 'Email value cannot be empty');
     checkEmptyValue(password.trim(), 'Password value cannot be empty');
@@ -18,10 +43,10 @@ router.post('/auth/register', validator({
     const userInDb = await User.findByEmail(email.trim());
 
     if (userInDb.length !== 0) {
-        return res.status(400).send('This email already exists');
+        return res.status(400).send('This email already exists or you forgot to add a picture');
     } else {
         try {
-            await User.createUser(email, password, name);
+            await User.createUser(email, password, name, `${req.file.filename}.${fileExtensionStr}`);
             res.status(201).send('Registration completed successfully');
         } catch (error) {
             return next(res.status(400).send(`Registration error - ${error}`));
