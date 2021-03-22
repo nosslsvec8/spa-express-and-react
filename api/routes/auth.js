@@ -43,7 +43,7 @@ router.post('/auth/register', upload.single('avatar'), validator({
     const userInDb = await User.findByEmail(email.trim());
 
     if (userInDb.length !== 0) {
-        return res.status(400).send('This email already exists or you forgot to add a picture');
+        return res.status(400).send('This email already exists');
     } else {
         try {
             await User.createUser(email, password, name, `${req.file.filename}.${fileExtensionStr}`);
