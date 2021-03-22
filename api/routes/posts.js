@@ -5,8 +5,11 @@ const checkAcl = require('../middleware/checkAcl');
 const checkAuth = passport.authenticate('jwt', {session: false});
 const validator = require('../middleware/validator');
 
+router.get("(/post/count|/posts/count)", async (req, res) => {
+    res.send(await Post.getCountPost());
+});
 router.get("(/post|/posts)", async (req, res) => {
-    res.send(await Post.getAllPost());
+    res.send(await Post.getLimitPost(req.query?.limit));
 });
 router.get("(/post/:id|/posts/:id)", async (req, res) => {
     res.send(await Post.findById(req.params.id));
