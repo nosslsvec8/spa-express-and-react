@@ -23,7 +23,7 @@ router.post('/auth/register', upload.single('avatar'), validator({
     const {email, password, name} = req.body;
     const fileExtensionStr = req.file?.originalname.split('.')[1];
     const basePathAvatar = `${req.file?.path}`;
-    let avatarLink = `${basePathAvatar}.${fileExtensionStr}`;
+    const avatarLink = `${basePathAvatar}.${fileExtensionStr}`;
 
     try {
         if (fileExtensionStr !== 'jpg' && fileExtensionStr !== 'png') {

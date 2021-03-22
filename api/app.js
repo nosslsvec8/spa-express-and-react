@@ -8,6 +8,7 @@ require("dotenv").config();
 const port = process.env.WEB_PORT;
 const host = process.env.WEB_HOST;
 
+const uploadRoutes = require('./routes/uploads');
 const defaultRoutes = require('./routes');
 const authRoutes = require('./routes/auth');
 const postsRoutes = require('./routes/posts');
@@ -23,6 +24,7 @@ require('./services/passport')(passport);
 app.use(express.static('uploads'));
 
 // Routes:
+app.use(uploadRoutes);
 app.use(defaultRoutes);
 app.use(authRoutes);
 app.use(postsRoutes);
