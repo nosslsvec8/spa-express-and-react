@@ -28,3 +28,6 @@ benchmarks/graphs
 
 # Personal settings
 .env
+
+# custom
+uploads/*
