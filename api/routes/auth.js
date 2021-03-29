@@ -3,17 +3,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const validator = require('../middleware/validator');
+const checkEmptyValue = require('../services/checkEmptyValue');
 const multer = require('multer');
 const fs = require('fs');
-
-const storage = multer.diskStorage({
-    destination: `${__dirname}/..\\uploads`,
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + Date.now())
-    }
-});
-
-let upload = multer({storage: storage});
+const storage = require('../services/multerDiskStorage');
+const upload = multer({storage: storage});
 
 router.post('/auth/register', upload.single('avatar'), validator({
     email: ['required', 'email', `unique:${User.tableName}:create`],
@@ -107,9 +101,5 @@ router.post('/auth/login', validator({
         }
     }
 });
-
-function checkEmptyValue(value, ErrorText) {
-    return (value) ? 1 : res.status(400).send(ErrorText);
-}
 
 module.exports = router;

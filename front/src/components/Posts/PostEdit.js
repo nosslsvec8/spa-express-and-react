@@ -6,13 +6,18 @@ import Typography from "@material-ui/core/Typography";
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import BasicTextField from '../Fields/BasicTextField';
+import Cropper from 'react-cropper';
+import "cropperjs/dist/cropper.css";
 
 
 function PostEdit({post, onSubmit}) {
     const [isOpen, setIsOpen] = useState(false);
     const [formValues, setFormValues] = useState(null);
+    const FILE_TYPES = ['image/jpeg'];
+    const [image, setImage] = useState();
+    const [croppedImage, setCroppedImage] = useState();
+    const [cropper, setCropper] = useState();
     const initialValues = {title: '', text: ''};
-    let saveValues = post;
 
     const postSchema = Yup.object().shape({
         title: Yup.string()
@@ -26,24 +31,45 @@ function PostEdit({post, onSubmit}) {
     });
 
     const handleSubmit = data => {
-        onSubmit(data);
+        onSubmit({...data, postPicture: croppedImage});
         handleClose();
     };
 
     const handleClose = () => setIsOpen(false);
     const handleOpen = () => {
-        setFormValues(saveValues);
+        setFormValues(post);
         setIsOpen(true);
+    };
+
+    const handleChange = e => {
+        e.preventDefault();
+        const file = e.target.files[0];
+
+        if (FILE_TYPES.includes(file.type) && file.size < 10000000) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setImage(reader.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            console.log('ERROR!');
+        }
+    };
+
+    const cropImage = () => {
+        if (typeof cropper !== 'undefined') {
+            setCroppedImage(cropper.getCroppedCanvas().toDataURL());
+        }
     };
 
     return (
         <div>
-            <Typography variant="body1" title={`Edit ${post.id} post`} onClick={handleOpen}>Edit article</Typography>
+            <Typography variant="body1" title={`Edit ${post.id} post`} onClick={handleOpen}>Edit</Typography>
             <Dialog
                 open={isOpen}
                 onClose={handleClose}
             >
-                <Typography variant="h3">Post Edit Form:</Typography>
+                <Typography variant="h3">Edit Form:</Typography>
                 <DialogContent>
                     <Formik
                         initialValues={formValues || initialValues}

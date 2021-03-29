@@ -1,10 +1,18 @@
 import React from 'react';
-import List from '@material-ui/core/List';
 import Typography from "@material-ui/core/Typography";
+import PostEdit from "../../containers/PostEditContainer";
+import Grid from "@material-ui/core/Grid";
 
 function PostsList({post, isFetching}) {
     return (
-        <List component="nav" aria-label="main mailbox folders">
+        <Grid container spacing={3}>
+            <Grid item xs={9}>User name (author)</Grid>
+            <Grid item xs={3}>
+                {!isFetching &&
+                post.map(({id, title, text}) => (
+                    <PostEdit post={{id, title, text}}/>
+                ))}
+            </Grid>
             {isFetching && 'Loading posts...'}
             {!isFetching &&
             post.map(({id, title, text}) => (
@@ -13,7 +21,7 @@ function PostsList({post, isFetching}) {
                     <Typography variant="body1">{text}</Typography>
                 </div>
             ))}
-        </List>
+        </Grid>
     );
 }
 

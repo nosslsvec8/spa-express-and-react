@@ -5,6 +5,9 @@ const checkAcl = require('../middleware/checkAcl');
 const checkAuth = passport.authenticate('jwt', {session: false});
 const validator = require('../middleware/validator');
 
+router.get("/user/:id", async (req, res) => {
+    res.send(await User.findById(req.params.id));
+});
 router.get("(/user|/users)", async (req, res) => {
     res.send(await User.getAllUsers());
 });

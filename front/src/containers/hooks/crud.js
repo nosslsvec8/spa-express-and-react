@@ -12,6 +12,18 @@ export const getPost = async (id) => {
     return (await apiClient.get(`/post/${id}`));
 };
 
+export const getUser = async (id) => {
+    return (await apiClient.get(`/user/${id}`));
+};
+
+export const getUserAvatar = async (path) => {
+    return (await apiClient.get(`/uploads/${path}`));
+};
+
+export const updateUserRequest = async (data) => {
+    return (await apiClient.put(`/user/${data.id}`, data));
+};
+
 export const createPostRequest = async (data) => {
     return (await apiClient.post('/post', data));
 };
