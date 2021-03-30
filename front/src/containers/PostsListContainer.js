@@ -2,8 +2,6 @@ import React, {useCallback, useState} from 'react';
 import {useMutation, useQuery} from 'react-query';
 import PostsList from '../components/Posts/PostsList';
 import {getPosts, getCountPosts, createPostRequest} from "./hooks/crud";
-import Grid from "@material-ui/core/Grid";
-import './PostsListContainer.css';
 
 function PostsListContainer() {
     const [limit, setLimit] = useState(10);
@@ -26,9 +24,7 @@ function PostsListContainer() {
     }, [createPost]);
 
     return (
-        <Grid container spacing={3} justify={"center"} class="PostsListContainer">
-            <PostsList posts={posts} isFetching={isFetching} onLoadMore={onLoadMore} countPosts={countPosts}/>
-        </Grid>
+        <PostsList posts={posts} isFetching={isFetching} onLoadMore={onLoadMore} countPosts={countPosts}/>
     );
 }
 

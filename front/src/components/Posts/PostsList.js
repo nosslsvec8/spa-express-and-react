@@ -1,14 +1,26 @@
 import React, {useCallback} from 'react';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import Typography from '@material-ui/core/Typography';
+import {makeStyles} from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
 import Button from "@material-ui/core/Button";
 import PostEdit from "../../containers/PostEditContainer";
+import Grid from "@material-ui/core/Grid";
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        justifyContent: 'center',
+    },
+    paper: {
+        padding: theme.spacing(2),
+        textAlign: 'center',
+    },
+}));
 
 function PostsList({posts, isFetching, onLoadMore, countPosts}) {
+    const classes = useStyles();
+
     const handleMorePosts = useCallback(async () => {
         try {
             onLoadMore();
@@ -18,31 +30,35 @@ function PostsList({posts, isFetching, onLoadMore, countPosts}) {
     }, [posts]);
 
     return (
-        <List component="nav" aria-label="main mailbox folders">
+        <Grid container spacing={6} className={classes.root}>
             {isFetching && 'Loading posts...'}
             {!isFetching &&
-            posts.map(({id, title, text}) => (
-                <Card>
-                    <ListItem button key={id}>
+            posts.map(({id, title, text, pictureLink}) => (
+                <Grid item xs={9}>
+                    <Paper key={id} className={classes.paper}>
                         <CardHeader title={title}/>
+                        {pictureLink &&
+                        <img src={`${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}\\uploads\\${pictureLink}`}/>}
                         <CardContent>
                             <Typography variant="body1">{text}</Typography>
                         </CardContent>
                         <Typography variant="body1">
                             <PostEdit post={{id, title, text}}/>
                         </Typography>
-                    </ListItem>
-                </Card>
+                    </Paper>
+                </Grid>
             ))}
-            <Button
-                disabled={countPosts <= posts.length}
-                onClick={() => handleMorePosts()}
-                variant="contained"
-                color="primary"
-            >
-                Load more
-            </Button>
-        </List>
+            <Grid item xs={12}>
+                <Button
+                    disabled={countPosts <= posts.length}
+                    onClick={() => handleMorePosts()}
+                    variant="contained"
+                    color="primary"
+                >
+                    Load more
+                </Button>
+            </Grid>
+        </Grid>
     );
 }
 
