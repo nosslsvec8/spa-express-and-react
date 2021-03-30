@@ -3,7 +3,7 @@ const db = require('../services/db');
 class Post {
     static tableName = process.env.DB_PostTableName;
 
-    static async createPost(text, title, avatarLink) {
+    static async createPost(text, title, pictureLink) {
         let lastId = await Post.getLastID();
         let newID;
 
@@ -15,7 +15,7 @@ class Post {
             userId: newID,
             title: title,
             text: text,
-            avatarLink: avatarLink
+            pictureLink: pictureLink
         });
     }
 

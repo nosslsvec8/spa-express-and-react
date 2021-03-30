@@ -23,7 +23,7 @@ function PostCreate({onSubmit}) {
             .max(100, 'Too Long!')
             .required('Required field'),
         text: Yup.string()
-            .min(10, 'Too Short!')
+            .min(8, 'Too Short!')
             .max(1000, 'Too Long!')
             .required('Required field')
     });
@@ -71,7 +71,7 @@ function PostCreate({onSubmit}) {
                         validationSchema={postSchema}
                         onSubmit={handleSubmit}
                     >
-                        {() => (
+                        {({errors, touched}) => (
                             <Form>
                                 <div>
                                     <BasicTextField
@@ -79,6 +79,9 @@ function PostCreate({onSubmit}) {
                                         id="title"
                                         label="title"
                                     />
+                                    {errors.title && touched.title ? (
+                                        <div>{errors.title}</div>
+                                    ) : null}
                                 </div>
 
                                 <div>
@@ -87,6 +90,9 @@ function PostCreate({onSubmit}) {
                                         id="text"
                                         label="text"
                                     />
+                                    {errors.text && touched.text ? (
+                                        <div>{errors.text}</div>
+                                    ) : null}
                                 </div>
 
                                 <div>
@@ -96,7 +102,10 @@ function PostCreate({onSubmit}) {
                                                name="postPicture" id="postPicture"/>
                                     </Button>}
                                     {image && !croppedImage &&
-                                    <Cropper src={image} onInitialized={instance => setCropper(instance)}/>}
+                                    <Cropper
+                                        src={image}
+                                        onInitialized={instance => setCropper(instance)}
+                                        initialAspectRatio={2 / 2}/>}
                                     {image && !croppedImage &&
                                     <Button variant="contained" onClick={cropImage}>Crop!</Button>}
                                     {croppedImage && <img src={croppedImage} alt='uploaded'/>}

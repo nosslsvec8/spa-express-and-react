@@ -25,7 +25,7 @@ function PostEdit({post, onSubmit}) {
             .max(100, 'Too Long!')
             .required('Required field'),
         text: Yup.string()
-            .min(10, 'Too Short!')
+            .min(8, 'Too Short!')
             .max(1000, 'Too Long!')
             .required('Required field')
     });
@@ -77,7 +77,7 @@ function PostEdit({post, onSubmit}) {
                         onSubmit={handleSubmit}
                         enableReinitialize
                     >
-                        {({errors, touched, values, handleChange}) => (
+                        {({errors, touched}) => (
                             <Form>
                                 <div>
                                     <BasicTextField
@@ -99,6 +99,22 @@ function PostEdit({post, onSubmit}) {
                                     {errors.text && touched.text ? (
                                         <div>{errors.text}</div>
                                     ) : null}
+                                </div>
+
+                                <div>
+                                    {!croppedImage && <Button variant="contained" component="label">
+                                        Upload Image
+                                        <input accept="image/jpeg" onChange={handleChange} hidden type="file"
+                                               name="postPicture" id="postPicture"/>
+                                    </Button>}
+                                    {image && !croppedImage &&
+                                    <Cropper
+                                        src={image}
+                                        onInitialized={instance => setCropper(instance)}
+                                        initialAspectRatio={2 / 2}/>}
+                                    {image && !croppedImage &&
+                                    <Button variant="contained" onClick={cropImage}>Crop!</Button>}
+                                    {croppedImage && <img src={croppedImage} alt='uploaded'/>}
                                 </div>
 
                                 <Button type="submit" variant="contained" color="primary">

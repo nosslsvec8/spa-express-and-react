@@ -5,10 +5,7 @@ const checkAcl = require('../middleware/checkAcl');
 const checkAuth = passport.authenticate('jwt', {session: false});
 const validator = require('../middleware/validator');
 const checkEmptyValue = require('../services/checkEmptyValue');
-const multer = require('multer');
 const fs = require('fs');
-const storage = require('../services/multerDiskStorage');
-const upload = multer({storage: storage});
 
 router.get("(/post/count|/posts/count)", async (req, res) => {
     res.send(await Post.getCountPost());
@@ -23,33 +20,30 @@ router.post('(/post|/posts)', [
     validator({
         title: ['required', 'min:6', 'max:125'],
         text: ['required', 'min:10'],
+        postPicture: ['required'],
     }),
-    checkAuth, upload.single('postPicture'), async (req, res) => {
-        console.log(req);
-        const {title, text} = req.body;
-        const fileExtensionStr = req.file?.originalname.split('.')[1];
-        const basePathAvatar = `${req.file?.path}`;
-        const avatarLink = `${basePathAvatar}.${fileExtensionStr}`;
+    checkAuth, async (req, res) => {
+        const {title, text, postPicture} = req.body;
+        const fileExtensionStr = postPicture.split(";")[0].split("/")[1];
+        const pictureCode = postPicture.split(",")[1];
+        const pictureEncoding = postPicture.split(",")[0].split(";")[1];
+        const pictureLink = `Post${Date.now()}.${fileExtensionStr}`;
+        const pictureFullLink = `${__dirname}/..\\uploads\\${pictureLink}`;
 
-        try {
-            if (fileExtensionStr !== 'jpg' && fileExtensionStr !== 'png') {
-                return next(res.status(400).send(`Create post error - an avatar can only be an image`));
-            }
-            if (fs.existsSync(`${basePathAvatar}`)) {
-                fs.renameSync(`${basePathAvatar}`, `${avatarLink}`);
-            }
-        } catch (err) {
-            return next(res.status(400).send(`Create post error - ${error}`));
+        fs.writeFileSync(pictureFullLink, pictureCode, pictureEncoding);
+
+        if (fileExtensionStr !== 'jpg' && fileExtensionStr !== 'png') {
+            res.status(400).send(`Create post error - an avatar can only be an image`);
         }
 
         checkEmptyValue(title.trim(), 'Title value cannot be empty');
         checkEmptyValue(text.trim(), 'Text value cannot be empty');
 
         try {
-            await Post.createPost(title, text, `${req.file.filename}.${fileExtensionStr}`);
+            await Post.createPost(title, text, `${pictureLink}`);
             res.status(201).send('Post successfully created');
         } catch (error) {
-            return next(res.status(400).send(`Created error - ${error}`));
+            res.status(400).send(`Created error - ${error}`);
         }
     }]
 );
