@@ -6,14 +6,16 @@ import "./Post.css";
 
 function PostsList({post, isFetching}) {
     return (
-        <Grid container spacing={5} class="Post">
-            <Grid item xs={9}>User name (author)</Grid>
-            <Grid item xs={3}>
-                {!isFetching &&
-                post.map(({id, title, text}) => (
-                    <PostEdit post={{id, title, text}}/>
-                ))}
-            </Grid>
+        <Grid container class="Post">
+            <div className="flex">
+                <Grid item xs={9}>User name (author)</Grid>
+                <Grid item xs={3} className="text-right">
+                    {!isFetching &&
+                    post.map(({id, title, text}) => (
+                        <PostEdit post={{id, title, text}}/>
+                    ))}
+                </Grid>
+            </div>
             {isFetching && 'Loading posts...'}
             {!isFetching &&
             post.map(({id, title, text, pictureLink}) => (

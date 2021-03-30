@@ -6,9 +6,3 @@ header nav a{
     text-decoration: blink;
     padding: 5px 15px;
 }
-
-.flex {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-}
