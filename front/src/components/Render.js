@@ -6,7 +6,7 @@ import './Header/Header.css';
 import Footer from "./Footer/Footer";
 import Post from "../containers/PostContainer";
 import PostsList from "../containers/PostsListContainer";
-import Profile from "./Profile";
+import Profile from "../containers/ProfileContainer";
 import User from "./User";
 
 const queryClient = new QueryClient();
