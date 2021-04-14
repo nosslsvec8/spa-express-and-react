@@ -8,6 +8,8 @@ const multer = require('multer');
 const fs = require('fs');
 const storage = require('../services/multerDiskStorage');
 const upload = multer({storage: storage});
+const passport = require('passport');
+const checkAuth = passport.authenticate('jwt', {session: false});
 
 router.post('/auth/register', upload.single('avatar'), validator({
     email: ['required', 'email', `unique:${User.tableName}:create`],
@@ -26,7 +28,7 @@ router.post('/auth/register', upload.single('avatar'), validator({
         if (fs.existsSync(`${basePathAvatar}`)) {
             fs.renameSync(`${basePathAvatar}`, `${avatarLink}`);
         }
-    } catch(err) {
+    } catch (err) {
         return next(res.status(400).send(`Registration error - ${error}`));
     }
 
@@ -92,14 +94,24 @@ router.post('/auth/login', validator({
             const token = jwt.sign({
                 email: userInDb[0].email,
                 id: userInDb[0].id,
-            }, jwtKey, {expiresIn: 60 * 60 * 24});
+            }, jwtKey, {expiresIn: 60 * 60 * 24 * 30});
 
             await User.updateToken(userInDb[0].id, token);
-            return res.status(200).send('Authorization was successful');
+
+            return res.send({accessToken: token});
         } else {
             return res.status(401).send('Passwords do not match');
         }
     }
 });
+
+router.post('/auth/isCheckAccessToken', [checkAuth, validator({
+    accessToken: ['required']
+}), async (req, res) => {
+    const {accessToken} = req.body;
+    checkEmptyValue(accessToken.trim(), 'AccessToken value cannot be empty');
+
+    return res.send(true);
+}]);
 
 module.exports = router;

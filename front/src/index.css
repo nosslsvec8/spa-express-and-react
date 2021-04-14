@@ -33,3 +33,11 @@ form .MuiGrid-container > button {
   justify-content: space-around;
   align-items: center;
 }
+
+.link {
+  color: rgb(85, 26, 139);
+}
+
+.link:hover {
+  cursor: pointer;
+}

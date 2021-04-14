@@ -5,6 +5,8 @@ import Grid from "@material-ui/core/Grid";
 import "./Post.css";
 
 function PostsList({post, isFetching}) {
+    const pathImageStorage = `${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}\\uploads\\`;
+
     return (
         <Grid container class="Post">
             <div className="flex">
@@ -26,7 +28,10 @@ function PostsList({post, isFetching}) {
                     </Grid>
                     <Grid item xs={4}>
                         {pictureLink &&
-                        <img src={`${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}\\uploads\\${pictureLink}`}/>}
+                        <img
+                            src={`${pathImageStorage}${pictureLink}`}
+                            alt='Post title'
+                        />}
                     </Grid>
                 </Grid>
             ))}

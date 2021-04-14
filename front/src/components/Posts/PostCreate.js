@@ -58,8 +58,8 @@ function PostCreate({onSubmit}) {
     };
 
     return (
-        <div>
-            <Typography variant="body1" title="Add new post to the list" onClick={handleOpen}>Add article</Typography>
+        <>
+            <span title="Add new post to the list" onClick={handleOpen} className='link'>Add article</span>
             <Dialog
                 open={isOpen}
                 onClose={handleClose}
@@ -119,7 +119,7 @@ function PostCreate({onSubmit}) {
                     </Formik>
                 </DialogContent>
             </Dialog>
-        </div>
+        </>
     );
 }
 

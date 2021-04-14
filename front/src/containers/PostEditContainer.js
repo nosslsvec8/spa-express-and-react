@@ -8,7 +8,7 @@ function PostEditContainer({post}) {
 
     const onSubmit = useCallback(async formData => {
         try {
-            const data = await editPost(formData);
+            await editPost(formData);
         } catch (e) {
             console.log(e);
         }

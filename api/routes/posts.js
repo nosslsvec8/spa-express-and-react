@@ -27,7 +27,7 @@ router.post('(/post|/posts)', [
         const fileExtensionStr = postPicture.split(";")[0].split("/")[1];
         const pictureCode = postPicture.split(",")[1];
         const pictureEncoding = postPicture.split(",")[0].split(";")[1];
-        const pictureLink = `Post${Date.now()}.${fileExtensionStr}`;
+        const pictureLink = `post${Date.now()}.${fileExtensionStr}`;
         const pictureFullLink = `${__dirname}/..\\uploads\\${pictureLink}`;
 
         fs.writeFileSync(pictureFullLink, pictureCode, pictureEncoding);

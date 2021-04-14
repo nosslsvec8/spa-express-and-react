@@ -31,3 +31,21 @@ export const createPostRequest = async (data) => {
 export const updatePostRequest = async (data) => {
     return (await apiClient.put(`/post/${data.id}`, data));
 };
+
+export const loginRequest = async (data) => {
+    let accessToken = null;
+
+    await apiClient.post(`/auth/login`, data).then(response => {
+        accessToken = response?.data.accessToken;
+    });
+
+    localStorage.setItem('accessToken', accessToken);
+};
+
+export const isCheckAccessToken = async (accessToken) => {
+    return (await apiClient.post(`/auth/isCheckAccessToken`, accessToken, {
+        headers: {
+            'Authorization' : `Bearer ${accessToken.accessToken}`
+        },
+    }));
+};

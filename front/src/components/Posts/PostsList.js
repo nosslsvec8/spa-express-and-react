@@ -11,6 +11,7 @@ import Grid from "@material-ui/core/Grid";
 const useStyles = makeStyles((theme) => ({
     root: {
         justifyContent: 'center',
+        marginTop: '30px'
     },
     paper: {
         padding: theme.spacing(2),
@@ -20,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
 
 function PostsList({posts, isFetching, onLoadMore, countPosts}) {
     const classes = useStyles();
+    const pathImageStorage = `${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}\\uploads\\`;
 
     const handleMorePosts = useCallback(async () => {
         try {
@@ -30,21 +32,22 @@ function PostsList({posts, isFetching, onLoadMore, countPosts}) {
     }, [posts]);
 
     return (
-        <Grid container spacing={6} className={classes.root}>
+        <Grid container spacing={5} className={classes.root}>
             {isFetching && 'Loading posts...'}
             {!isFetching &&
             posts.map(({id, title, text, pictureLink}) => (
-                <Grid item xs={9}>
-                    <Paper key={id} className={classes.paper}>
+                <Grid item xs={9} key={id}>
+                    <Paper className={classes.paper}>
                         <CardHeader title={title}/>
                         {pictureLink &&
-                        <img src={`${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}\\uploads\\${pictureLink}`}/>}
+                        <img
+                            src={`${pathImageStorage}${pictureLink}`}
+                            alt='Post title'
+                        />}
                         <CardContent>
                             <Typography variant="body1">{text}</Typography>
                         </CardContent>
-                        <Typography variant="body1">
-                            <PostEdit post={{id, title, text}}/>
-                        </Typography>
+                        <PostEdit post={{id, title, text}}/>
                     </Paper>
                 </Grid>
             ))}

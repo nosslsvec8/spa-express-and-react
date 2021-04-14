@@ -8,7 +8,7 @@ function PostsCreateContainer() {
 
     const onSubmit = useCallback(async formData => {
         try {
-            const data = await createPost(formData);
+            await createPost(formData);
         } catch (e) {
             console.log(e);
         }
