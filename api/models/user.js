@@ -5,8 +5,6 @@ class User {
     static tableName = process.env.DB_UserTableName;
 
     static async updateUser(user) {
-        console.log('user: ', user);
-
         return db.select().from(this.tableName).where('id', '=', user.id).update({
             email: user.email,
             name: user.name,
