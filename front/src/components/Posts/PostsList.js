@@ -1,17 +1,18 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useContext} from 'react';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Button from "@material-ui/core/Button";
-import PostEdit from "../../containers/PostEditContainer";
+import PostEdit from "../../containers/Post/PostEditContainer";
+import PostDelete from "../../containers/Post/PostDeleteContainer";
 import Grid from "@material-ui/core/Grid";
+import {CurrentUserContext} from "../../containers/RenderContainer";
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        justifyContent: 'center',
-        marginTop: '30px'
+        justifyContent: 'center'
     },
     paper: {
         padding: theme.spacing(2),
@@ -20,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function PostsList({posts, isFetching, onLoadMore, countPosts}) {
+    const currentUser = useContext(CurrentUserContext);
     const classes = useStyles();
     const pathImageStorage = `${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}\\uploads\\`;
 
@@ -30,6 +32,10 @@ function PostsList({posts, isFetching, onLoadMore, countPosts}) {
             console.log(e);
         }
     }, [posts]);
+
+    if(!currentUser) {
+        return (<></>);
+    }
 
     return (
         <Grid container spacing={5} className={classes.root}>
@@ -47,7 +53,10 @@ function PostsList({posts, isFetching, onLoadMore, countPosts}) {
                         <CardContent>
                             <Typography variant="body1">{text}</Typography>
                         </CardContent>
-                        <PostEdit post={{id, title, text}}/>
+                        {id===currentUser.id &&
+                        <PostEdit post={{id, title, text}}/>}
+                        {id===currentUser.id &&
+                        <PostDelete post={{id}}/>}
                     </Paper>
                 </Grid>
             ))}

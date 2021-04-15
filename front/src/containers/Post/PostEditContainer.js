@@ -1,7 +1,7 @@
 import React, {useCallback} from 'react';
 import {useMutation} from 'react-query';
-import PostEdit from '../components/Posts/PostEdit';
-import {updatePostRequest} from "./hooks/crud";
+import PostEdit from '../../components/Posts/PostEdit';
+import {updatePostRequest} from "../hooks/crud";
 
 function PostEditContainer({post}) {
     const {mutate: editPost} = useMutation(updatePostRequest);

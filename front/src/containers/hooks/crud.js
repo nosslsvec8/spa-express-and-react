@@ -16,20 +16,45 @@ export const getUser = async (id) => {
     return (await apiClient.get(`/user/${id}`));
 };
 
-export const getUserAvatar = async (path) => {
-    return (await apiClient.get(`/uploads/${path}`));
+export const getByTokenUser = async (data) => {
+    return (await apiClient.post(`/getUser`, data, {
+        headers: {
+            'Authorization' : `Bearer ${data.accessToken}`
+        }
+    }));
 };
 
 export const updateUserRequest = async (data) => {
-    return (await apiClient.put(`/user/${data.id}`, data));
+    const accessToken = localStorage.getItem('accessToken');
+    return (await apiClient.put(`/user/${data.id}`, data, {
+        headers: {
+            'Authorization' : `Bearer ${accessToken}`
+        }
+    }));
 };
 
 export const createPostRequest = async (data) => {
-    return (await apiClient.post('/post', data));
+    return (await apiClient.post('/post', data, {
+        headers: {
+            'Authorization' : `Bearer ${data.accessToken}`
+        }
+    }));
 };
 
 export const updatePostRequest = async (data) => {
-    return (await apiClient.put(`/post/${data.id}`, data));
+    return (await apiClient.put(`/post/${data.id}`, data, {
+        headers: {
+            'Authorization' : `Bearer ${data.accessToken}`
+        }
+    }));
+};
+
+export const deletePostRequest = async (data) => {
+    return (await apiClient.delete(`/post/${data.id}`, data, {
+        headers: {
+            'Authorization' : `Bearer ${data.accessToken}`
+        }
+    }));
 };
 
 export const loginRequest = async (data) => {
@@ -42,10 +67,10 @@ export const loginRequest = async (data) => {
     localStorage.setItem('accessToken', accessToken);
 };
 
-export const isCheckAccessToken = async (accessToken) => {
-    return (await apiClient.post(`/auth/isCheckAccessToken`, accessToken, {
+export const isCheckAccessToken = async (data) => {
+    return (await apiClient.post(`/auth/isCheckAccessToken`, data, {
         headers: {
-            'Authorization' : `Bearer ${accessToken.accessToken}`
-        },
+            'Authorization' : `Bearer ${data.accessToken}`
+        }
     }));
 };

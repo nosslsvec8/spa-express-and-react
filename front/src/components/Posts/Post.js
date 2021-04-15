@@ -1,6 +1,6 @@
 import React from 'react';
 import Typography from "@material-ui/core/Typography";
-import PostEdit from "../../containers/PostEditContainer";
+import PostEdit from "../../containers/Post/PostEditContainer";
 import Grid from "@material-ui/core/Grid";
 import "./Post.css";
 

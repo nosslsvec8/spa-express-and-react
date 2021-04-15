@@ -1,7 +1,7 @@
 import React, {useCallback} from 'react';
 import {useMutation} from 'react-query';
-import PostCreate from '../components/Posts/PostCreate';
-import {createPostRequest} from "./hooks/crud";
+import PostCreate from '../../components/Posts/PostCreate';
+import {createPostRequest} from "../hooks/crud";
 
 function PostsCreateContainer() {
     const {mutate: createPost} = useMutation(createPostRequest);

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useQuery} from 'react-query';
-import PostsList from '../components/Posts/PostsList';
-import {getPosts, getCountPosts} from "./hooks/crud";
+import PostsList from '../../components/Posts/PostsList';
+import {getPosts, getCountPosts} from "../hooks/crud";
 
 function PostsListContainer() {
     const [limit, setLimit] = useState(5);

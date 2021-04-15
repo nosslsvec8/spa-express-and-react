@@ -4,11 +4,10 @@ import {BrowserRouter} from "react-router-dom";
 import Header from "./Header/Header";
 import './Header/Header.css';
 import Footer from "./Footer/Footer";
-import Post from "../containers/PostContainer";
-import PostsList from "../containers/PostsListContainer";
+import Post from "../containers/Post/PostContainer";
+import PostsList from "../containers/Post/PostsListContainer";
 import Profile from "../containers/ProfileContainer";
 import User from "./User";
-
 import IsCheckAccessToken from '../services/IsCheckAccessToken';
 
 function Render() {

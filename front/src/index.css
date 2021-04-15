@@ -17,6 +17,17 @@ div {
   padding: 0 20px;
 }
 
+img {
+  max-height: 80px;
+  max-width: 80px;
+  border-radius: 10px;
+}
+
+img + span,
+span.link + span.link {
+  padding-left: 10px;
+}
+
 form div:last-child > .MuiFormControl-root,
 form div:last-child > .MuiFormControl-root {
   margin-bottom: 30px;

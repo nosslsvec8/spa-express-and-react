@@ -1,13 +1,13 @@
 import React from "react";
 import {QueryClient, QueryClientProvider} from "react-query";
-import Render from './components/Render';
+import RenderContainer from './containers/RenderContainer';
 
 const queryClient = new QueryClient();
 
 function App() {
     return (
         <QueryClientProvider client={queryClient}>
-            <Render/>
+            <RenderContainer/>
         </QueryClientProvider>
     );
 }

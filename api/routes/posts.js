@@ -56,13 +56,14 @@ router.put("(/post/:id|/posts/:id)", [checkAuth, checkAcl([
     id: ['required']
 }), async (req, res) => {
     await Post.updatePostId(req.body.id, req.body);
-    res.status(201).send('Post successfully changed');
+    res.status(200).send('Post successfully changed');
 }]);
 router.delete("(/post/:id|/posts/:id)", [checkAuth, checkAcl([
     {permission: "deleteAnyPost"},
     {permission: "deleteOwnPost", checkAuthor: true, table: Post.tableName, column: 'userId'}
 ]), async (req, res) => {
-    res.send(`Delete ${req.params.id} post`);
+    await Post.deletePost(req.body.id);
+    res.status(200).send('Post successfully deleted');
 }]);
 
 module.exports = router;
