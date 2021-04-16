@@ -5,8 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Button from "@material-ui/core/Button";
-import PostEdit from "../../containers/Post/PostEditContainer";
-import PostDelete from "../../containers/Post/PostDeleteContainer";
+import PostAction from "../../components/Posts/PostActions";
 import Grid from "@material-ui/core/Grid";
 import {CurrentUserContext} from "../../containers/RenderContainer";
 
@@ -24,6 +23,7 @@ function PostsList({posts, isFetching, onLoadMore, countPosts}) {
     const currentUser = useContext(CurrentUserContext);
     const classes = useStyles();
     const pathImageStorage = `${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}\\uploads\\`;
+    const getMorePosts = () => handleMorePosts();
 
     const handleMorePosts = useCallback(async () => {
         try {
@@ -44,6 +44,8 @@ function PostsList({posts, isFetching, onLoadMore, countPosts}) {
             posts.map(({id, title, text, pictureLink}) => (
                 <Grid item xs={9} key={id}>
                     <Paper className={classes.paper}>
+                        {id===currentUser.id &&
+                        <PostAction post={{id, title, text}}/>}
                         <CardHeader title={title}/>
                         {pictureLink &&
                         <img
@@ -53,17 +55,13 @@ function PostsList({posts, isFetching, onLoadMore, countPosts}) {
                         <CardContent>
                             <Typography variant="body1">{text}</Typography>
                         </CardContent>
-                        {id===currentUser.id &&
-                        <PostEdit post={{id, title, text}}/>}
-                        {id===currentUser.id &&
-                        <PostDelete post={{id}}/>}
                     </Paper>
                 </Grid>
             ))}
             <Grid item xs={12}>
                 <Button
                     disabled={countPosts <= posts.length}
-                    onClick={() => handleMorePosts()}
+                    onClick={getMorePosts}
                     variant="contained"
                     color="primary"
                 >

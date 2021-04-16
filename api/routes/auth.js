@@ -105,6 +105,23 @@ router.post('/auth/login', validator({
     }
 });
 
+router.post('/auth/logout', [checkAuth, validator({
+    accessToken: ['required']
+}), async (req, res) => {
+    const {accessToken} = req.body;
+
+    checkEmptyValue(accessToken.trim(), 'AccessToken value cannot be empty');
+
+    const userInDb = await User.findByToken(accessToken);
+
+    if (!userInDb) {
+        return res.status(404).send('This token not found');
+    } else {
+        await User.deleteToken(userInDb.id);
+        return res.send(true);
+    }
+}]);
+
 router.post('/auth/isCheckAccessToken', [checkAuth, validator({
     accessToken: ['required']
 }), async (req, res) => {

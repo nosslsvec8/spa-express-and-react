@@ -8,7 +8,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Card from "@material-ui/core/Card";
 
 function PostContainer() {
-    const regEx = /[^\d\+]/g;
+    const regEx = /[^\d+]/g;
     const location = useLocation();
     const id = location.pathname.replace(regEx, '');
 

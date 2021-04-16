@@ -65,6 +65,20 @@ export const loginRequest = async (data) => {
     });
 
     localStorage.setItem('accessToken', accessToken);
+    window.location.reload();
+};
+
+export const LogoutRequest = async () => {
+    const accessToken = localStorage.getItem('accessToken');
+
+    await apiClient.post('/auth/logout', {accessToken: accessToken}, {
+        headers: {
+            'Authorization' : `Bearer ${accessToken}`
+        }
+    });
+
+    localStorage.removeItem('accessToken');
+    window.location.reload();
 };
 
 export const isCheckAccessToken = async (data) => {

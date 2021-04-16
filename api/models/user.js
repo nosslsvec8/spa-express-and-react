@@ -43,6 +43,10 @@ class User {
         return db.select().from(this.tableName).where( 'id', '=', id).update({ token: token });
     }
 
+    static async deleteToken(id) {
+        return db.select().from(this.tableName).where( 'id', '=', id).update({ token: null });
+    }
+
     static async findByToken(token) {
         return db.select().from(this.tableName).where({ token }).first();
     }

@@ -6,12 +6,11 @@ import {loginRequest} from "../hooks/crud";
 function LoginContainer() {
     const {mutate: user} = useMutation(loginRequest);
     let userData = null;
-    const {data: response, refetch} = useQuery(['accessToken'], () => loginRequest(userData), {enabled: false});
 
     const onSubmit = useCallback(async formData => {
         try {
             userData = formData;
-            await refetch(formData);
+            await user(formData);
         } catch (e) {
             console.log(e);
         }

@@ -3,6 +3,7 @@ import PostCreate from "../../containers/Post/PostCreateContainer";
 import React, {useContext} from "react";
 import Register from "../Auth/Register";
 import Login from "../../containers/Auth/LoginContainer";
+import Logout from "../../containers/Auth/LogoutContainer";
 import {CurrentUserContext} from "../../containers/RenderContainer";
 import IsCheckAccessToken from '../../services/IsCheckAccessToken';
 
@@ -23,11 +24,16 @@ function Header() {
                 </div>}
                 {currentUser &&
                 <div>
-                    <img
-                        src={`${pathImageStorage}${currentUser.avatarLink}`}
-                        alt='User avatar'
-                    />
-                    <span>{currentUser.name}</span>
+                    <div>
+                        <img
+                            src={`${pathImageStorage}${currentUser.avatarLink}`}
+                            alt='User avatar'
+                        />
+                        <span>{currentUser.name}</span>
+                    </div>
+                    <div>
+                        <Logout/>
+                    </div>
                 </div>}
             </div>
             {currentUser && IsCheckAccessToken() &&
