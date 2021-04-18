@@ -30,11 +30,11 @@ router.post('(/post|/posts)', [
         const pictureLink = `post${Date.now()}.${fileExtensionStr}`;
         const pictureFullLink = `${__dirname}/..\\uploads\\${pictureLink}`;
 
-        fs.writeFileSync(pictureFullLink, pictureCode, pictureEncoding);
-
         if (fileExtensionStr !== 'jpg' && fileExtensionStr !== 'png') {
             res.status(400).send(`Create post error - an avatar can only be an image`);
         }
+
+        fs.writeFileSync(pictureFullLink, pictureCode, pictureEncoding);
 
         checkEmptyValue(title.trim(), 'Title value cannot be empty');
         checkEmptyValue(text.trim(), 'Text value cannot be empty');

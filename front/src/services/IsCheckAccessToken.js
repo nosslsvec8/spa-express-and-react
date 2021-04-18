@@ -1,19 +1,17 @@
-import {useQuery} from "react-query";
-import {isCheckAccessToken} from "../containers/hooks/crud";
+import {useJwt} from "react-jwt";
 
 /**
  * @return {boolean}
  */
 function IsCheckAccessToken() {
     const accessToken = localStorage.getItem('accessToken');
-    const {data: response, isFetching, status} = useQuery(['accessToken'], () => isCheckAccessToken({accessToken}));
-    const booleanReq = response?.data || [];
+    const {isExpired} = useJwt(accessToken);
 
-    if(accessToken === null || status === 'error') {
+    if(accessToken === null || isExpired) {
         return false;
     }
 
-    if(booleanReq && !isFetching) {
+    if(!isExpired) {
         return true;
     }
 }

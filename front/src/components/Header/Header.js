@@ -2,7 +2,7 @@ import {Link} from "react-router-dom";
 import PostCreate from "../../containers/Post/PostCreateContainer";
 import React, {useContext} from "react";
 import Register from "../Auth/Register";
-import Login from "../../containers/Auth/LoginContainer";
+import Login from "../Auth/Login";
 import Logout from "../../containers/Auth/LogoutContainer";
 import {CurrentUserContext} from "../../containers/RenderContainer";
 import IsCheckAccessToken from '../../services/IsCheckAccessToken';
@@ -19,7 +19,6 @@ function Header() {
                 {!currentUser &&
                 <div>
                     <Register/>
-                    &nbsp;/&nbsp;
                     <Login/>
                 </div>}
                 {currentUser &&

@@ -1,11 +1,12 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const validator = require('../middleware/validator');
 const checkEmptyValue = require('../services/checkEmptyValue');
+const createJwtTokenStr = require('../services/createJwtTokenStr');
 const multer = require('multer');
 const fs = require('fs');
+const request = require('request');
 const storage = require('../services/multerDiskStorage');
 const upload = multer({storage: storage});
 const passport = require('passport');
@@ -50,27 +51,39 @@ router.post('/auth/register', upload.single('avatar'), validator({
     }
 });
 
-router.post('/register/social', async (req, res) => {
-    const {email, id, name} = req.body.profile;
+router.post('/auth/social', async (req, res) => {
+    const {email, name, profilePicURL} = req.body._profile;
+    const idSocialToken = req.body._token.idToken;
 
     checkEmptyValue(email.trim(), 'Email value cannot be empty');
-    checkEmptyValue(id.trim(), 'Password value cannot be empty');
     checkEmptyValue(name.trim(), 'Name value cannot be empty');
+    checkEmptyValue(profilePicURL.trim(), 'Picture url cannot be empty');
+    checkEmptyValue(idSocialToken.trim(), 'idSocialToken cannot be empty');
 
     const userInDb = await User.findByEmail(email.trim());
 
     if (userInDb.length === 0) {
         try {
-            await User.createUser(email, id, name);
-            res.status(201).send('Registration completed successfully');
+            const pictureLink = `avatar${Date.now()}.jpg`;
+            const pictureFullLink = `${__dirname}/..\\uploads\\${pictureLink}`;
+
+            request(profilePicURL).pipe(fs.createWriteStream(pictureFullLink));
+
+            await User.createUser(email, idSocialToken.substr(0, 80), name, pictureLink);
+            const newUserInDb = await User.findByEmail(email.trim());
+            const token = createJwtTokenStr( newUserInDb[0].email, newUserInDb[0].id);
+            await User.updateToken(newUserInDb[0].id, token);
+
+            return res.send({accessToken: token});
         } catch (error) {
             return next(res.status(400).send(`Registration error - ${error}`));
         }
     } else {
-        return res.status(400).send('This email already exists');
-    }
+        const token = createJwtTokenStr(userInDb[0].email, userInDb[0].id);
+        await User.updateToken(userInDb[0].id, token);
 
-    res.send({body: req.body});
+        return res.send({accessToken: token});
+    }
 });
 
 router.post('/auth/login', validator({
@@ -90,12 +103,7 @@ router.post('/auth/login', validator({
         const passwordResult = bcrypt.compareSync(password, userInDb[0].password);
 
         if (passwordResult) {
-            const jwtKey = process.env.JwtKey;
-            const token = jwt.sign({
-                email: userInDb[0].email,
-                id: userInDb[0].id,
-            }, jwtKey, {expiresIn: 60 * 60 * 24 * 30});
-
+            const token = createJwtTokenStr(userInDb[0].email, userInDb[0].id);
             await User.updateToken(userInDb[0].id, token);
 
             return res.send({accessToken: token});

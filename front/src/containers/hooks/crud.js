@@ -17,18 +17,23 @@ export const getUser = async (id) => {
 };
 
 export const getByTokenUser = async (data) => {
-    return (await apiClient.post(`/getUser`, data, {
-        headers: {
-            'Authorization' : `Bearer ${data.accessToken}`
-        }
-    }));
+    const accessToken = localStorage.getItem('accessToken');
+    if(accessToken !== null) {
+        return (await apiClient.post(`/getUser`, data, {
+            headers: {
+                'Authorization': `Bearer ${data.accessToken}`
+            }
+        }));
+    } else {
+        return false;
+    }
 };
 
 export const updateUserRequest = async (data) => {
     const accessToken = localStorage.getItem('accessToken');
     return (await apiClient.put(`/user/${data.id}`, data, {
         headers: {
-            'Authorization' : `Bearer ${accessToken}`
+            'Authorization': `Bearer ${accessToken}`
         }
     }));
 };
@@ -36,7 +41,7 @@ export const updateUserRequest = async (data) => {
 export const createPostRequest = async (data) => {
     return (await apiClient.post('/post', data, {
         headers: {
-            'Authorization' : `Bearer ${data.accessToken}`
+            'Authorization': `Bearer ${data.accessToken}`
         }
     }));
 };
@@ -44,7 +49,7 @@ export const createPostRequest = async (data) => {
 export const updatePostRequest = async (data) => {
     return (await apiClient.put(`/post/${data.id}`, data, {
         headers: {
-            'Authorization' : `Bearer ${data.accessToken}`
+            'Authorization': `Bearer ${data.accessToken}`
         }
     }));
 };
@@ -52,7 +57,7 @@ export const updatePostRequest = async (data) => {
 export const deletePostRequest = async (data) => {
     return (await apiClient.delete(`/post/${data.id}`, data, {
         headers: {
-            'Authorization' : `Bearer ${data.accessToken}`
+            'Authorization': `Bearer ${data.accessToken}`
         }
     }));
 };
@@ -68,12 +73,23 @@ export const loginRequest = async (data) => {
     window.location.reload();
 };
 
+export const socialLoginRequest = async (data) => {
+    let accessToken = null;
+
+    await apiClient.post(`/auth/social`, data).then(response => {
+        accessToken = response?.data.accessToken;
+    });
+
+    localStorage.setItem('accessToken', accessToken);
+    window.location.reload();
+};
+
 export const LogoutRequest = async () => {
     const accessToken = localStorage.getItem('accessToken');
 
     await apiClient.post('/auth/logout', {accessToken: accessToken}, {
         headers: {
-            'Authorization' : `Bearer ${accessToken}`
+            'Authorization': `Bearer ${accessToken}`
         }
     });
 
@@ -84,7 +100,7 @@ export const LogoutRequest = async () => {
 export const isCheckAccessToken = async (data) => {
     return (await apiClient.post(`/auth/isCheckAccessToken`, data, {
         headers: {
-            'Authorization' : `Bearer ${data.accessToken}`
+            'Authorization': `Bearer ${data.accessToken}`
         }
     }));
 };
