@@ -1,16 +1,17 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useContext} from 'react';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Button from "@material-ui/core/Button";
-import PostEdit from "../../containers/PostEditContainer";
+import PostAction from "../../components/Posts/PostActions";
 import Grid from "@material-ui/core/Grid";
+import {CurrentUserContext} from "../../containers/RenderContainer";
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        justifyContent: 'center',
+        justifyContent: 'center'
     },
     paper: {
         padding: theme.spacing(2),
@@ -19,7 +20,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function PostsList({posts, isFetching, onLoadMore, countPosts}) {
+    const currentUser = useContext(CurrentUserContext);
     const classes = useStyles();
+    const pathImageStorage = `${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}\\uploads\\`;
+    const getMorePosts = () => handleMorePosts();
 
     const handleMorePosts = useCallback(async () => {
         try {
@@ -29,29 +33,35 @@ function PostsList({posts, isFetching, onLoadMore, countPosts}) {
         }
     }, [posts]);
 
+    if(!currentUser) {
+        return (<></>);
+    }
+
     return (
-        <Grid container spacing={6} className={classes.root}>
+        <Grid container spacing={5} className={classes.root}>
             {isFetching && 'Loading posts...'}
             {!isFetching &&
             posts.map(({id, title, text, pictureLink}) => (
-                <Grid item xs={9}>
-                    <Paper key={id} className={classes.paper}>
+                <Grid item xs={9} key={id}>
+                    <Paper className={classes.paper}>
+                        {id===currentUser.id &&
+                        <PostAction post={{id, title, text}}/>}
                         <CardHeader title={title}/>
                         {pictureLink &&
-                        <img src={`${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}\\uploads\\${pictureLink}`}/>}
+                        <img
+                            src={`${pathImageStorage}${pictureLink}`}
+                            alt='Post title'
+                        />}
                         <CardContent>
                             <Typography variant="body1">{text}</Typography>
                         </CardContent>
-                        <Typography variant="body1">
-                            <PostEdit post={{id, title, text}}/>
-                        </Typography>
                     </Paper>
                 </Grid>
             ))}
             <Grid item xs={12}>
                 <Button
                     disabled={countPosts <= posts.length}
-                    onClick={() => handleMorePosts()}
+                    onClick={getMorePosts}
                     variant="contained"
                     color="primary"
                 >

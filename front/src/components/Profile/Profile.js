@@ -1,12 +1,14 @@
 import * as Yup from "yup";
 import {Form, Formik} from "formik";
-import BasicTextField from "./Fields/BasicTextField";
+import BasicTextField from "../Fields/BasicTextField";
 import Button from "@material-ui/core/Button";
 import React, {useState} from "react";
 import Grid from '@material-ui/core/Grid';
+import './Profile.css';
 
 function Profile({user, onSubmit}) {
     const [formValues, setFormValues] = useState(null);
+    const pathImageStorage = `${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}\\uploads\\`;
     const initialValues = {
         name: '',
         email: '',
@@ -14,13 +16,13 @@ function Profile({user, onSubmit}) {
         university: ''
     };
 
-    if (user.length !== 0 && formValues === null) {
+    if (user && formValues === null) {
         setFormValues({
-            name: user[0].name,
-            email: user[0].email,
-            phone: user[0].phone,
-            university: user[0].university,
-            avatarLink: `${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/uploads/${user[0].avatarLink}`
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            university: user.university,
+            avatarLink: `${pathImageStorage}${user.avatarLink}`
         });
     }
 
@@ -44,7 +46,10 @@ function Profile({user, onSubmit}) {
     });
 
     const handleSubmit = data => {
-        onSubmit(data);
+        onSubmit({
+            id: user.id,
+            ...data
+        });
     };
 
     return (
@@ -110,7 +115,11 @@ function Profile({user, onSubmit}) {
             </Grid>
             <Grid item xs={6}>
                 <div>
-                    <img src={formValues?.avatarLink} alt="avatar"/>
+                    <img
+                        className="profile-avatar"
+                        src={`${pathImageStorage}${user.avatarLink}`}
+                        alt='User avatar'
+                    />
                 </div>
             </Grid>
         </Grid>

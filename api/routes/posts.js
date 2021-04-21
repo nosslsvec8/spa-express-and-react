@@ -27,14 +27,14 @@ router.post('(/post|/posts)', [
         const fileExtensionStr = postPicture.split(";")[0].split("/")[1];
         const pictureCode = postPicture.split(",")[1];
         const pictureEncoding = postPicture.split(",")[0].split(";")[1];
-        const pictureLink = `Post${Date.now()}.${fileExtensionStr}`;
+        const pictureLink = `post${Date.now()}.${fileExtensionStr}`;
         const pictureFullLink = `${__dirname}/..\\uploads\\${pictureLink}`;
-
-        fs.writeFileSync(pictureFullLink, pictureCode, pictureEncoding);
 
         if (fileExtensionStr !== 'jpg' && fileExtensionStr !== 'png') {
             res.status(400).send(`Create post error - an avatar can only be an image`);
         }
+
+        fs.writeFileSync(pictureFullLink, pictureCode, pictureEncoding);
 
         checkEmptyValue(title.trim(), 'Title value cannot be empty');
         checkEmptyValue(text.trim(), 'Text value cannot be empty');
@@ -56,13 +56,14 @@ router.put("(/post/:id|/posts/:id)", [checkAuth, checkAcl([
     id: ['required']
 }), async (req, res) => {
     await Post.updatePostId(req.body.id, req.body);
-    res.status(201).send('Post successfully changed');
+    res.status(200).send('Post successfully changed');
 }]);
 router.delete("(/post/:id|/posts/:id)", [checkAuth, checkAcl([
     {permission: "deleteAnyPost"},
     {permission: "deleteOwnPost", checkAuthor: true, table: Post.tableName, column: 'userId'}
 ]), async (req, res) => {
-    res.send(`Delete ${req.params.id} post`);
+    await Post.deletePost(req.body.id);
+    res.status(200).send('Post successfully deleted');
 }]);
 
 module.exports = router;

@@ -7,8 +7,9 @@ class User {
     static async updateUser(user) {
         return db.select().from(this.tableName).where('id', '=', user.id).update({
             email: user.email,
-            password: bcrypt.hashSync(user.password, 10),
-            token: user.token
+            name: user.name,
+            phone: user?.phone || null,
+            university: user?.university || null
         });
     }
 
@@ -23,11 +24,10 @@ class User {
     }
 
     static async createUser(email, password, name, avatarLink) {
-        let lastId = await User.getLastID();
+        let countId = await User.getCountUsers();
         let newID;
 
-        // checking if users are in the database
-        (lastId.length === 0) ? newID = 1 : newID = lastId[lastId.length - 1].id + 1;
+        (countId.length === 0) ? newID = 1 : newID = +countId[0].count + 1;
 
         return db.select().from(this.tableName).insert({
             id: newID,
@@ -41,6 +41,10 @@ class User {
 
     static async updateToken(id, token) {
         return db.select().from(this.tableName).where( 'id', '=', id).update({ token: token });
+    }
+
+    static async deleteToken(id) {
+        return db.select().from(this.tableName).where( 'id', '=', id).update({ token: null });
     }
 
     static async findByToken(token) {
@@ -59,8 +63,8 @@ class User {
         return db.select().from(this.tableName).where({ id: userId });
     }
 
-    static async getLastID() {
-        return db.select('id').from(this.tableName);
+    static async getCountUsers() {
+        return db.count().from(this.tableName);
     }
 
     static async getAllUsers() {

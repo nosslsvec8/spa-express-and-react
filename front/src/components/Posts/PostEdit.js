@@ -63,8 +63,8 @@ function PostEdit({post, onSubmit}) {
     };
 
     return (
-        <div>
-            <Typography variant="body1" title={`Edit ${post.id} post`} onClick={handleOpen}>Edit</Typography>
+        <>
+            <span title={`Edit ${post.id} post`} onClick={handleOpen} className='link'>Edit</span>
             <Dialog
                 open={isOpen}
                 onClose={handleClose}
@@ -125,7 +125,7 @@ function PostEdit({post, onSubmit}) {
                     </Formik>
                 </DialogContent>
             </Dialog>
-        </div>
+        </>
     );
 }
 

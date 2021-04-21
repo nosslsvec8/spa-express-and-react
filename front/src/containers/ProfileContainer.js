@@ -1,20 +1,19 @@
-import React, {useCallback, useState} from 'react';
-import {useMutation, useQuery} from 'react-query';
+import React, {useCallback, useContext} from 'react';
+import {useMutation} from 'react-query';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
-import Profile from '../components/Profile';
-import {getUser, updateUserRequest, getUserAvatar} from "./hooks/crud";
+import Profile from '../components/Profile/Profile';
+import {updateUserRequest} from "./hooks/crud";
+import {CurrentUserContext} from "./RenderContainer";
 
 function ProfileContainer() {
-    const [id, setId] = useState(1);
-    const {data: response} = useQuery(['user', id], () => getUser(id));
-    const user = response?.data || [];
-
+    const currentUser = useContext(CurrentUserContext);
     const {mutate: editUser} = useMutation(updateUserRequest);
+
     const onSubmit = useCallback(async formData => {
         try {
-            const data = await editUser(formData);
+            await editUser(formData);
         } catch (e) {
             console.log(e);
         }
@@ -24,7 +23,7 @@ function ProfileContainer() {
         <Card>
             <CardHeader title="My Profile:"/>
             <CardContent>
-                <Profile user={user} onSubmit={onSubmit}/>
+                <Profile user={currentUser} onSubmit={onSubmit}/>
             </CardContent>
         </Card>
     );

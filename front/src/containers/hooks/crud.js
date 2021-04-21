@@ -1,33 +1,66 @@
-import {apiClient} from "../../config/axios";
+import {defaultApiClient, secureApiClient} from "../../config/axios";
 
 export const getPosts = async (limit, page) => {
-    return (await apiClient.get(`/posts?page=${page}&limit=${limit}`));
+    return (await secureApiClient.get(`/posts?page=${page}&limit=${limit}`));
 };
 
 export const getCountPosts = async () => {
-    return (await apiClient.get('/posts/count'));
+    return (await defaultApiClient.get('/posts/count'));
 };
 
 export const getPost = async (id) => {
-    return (await apiClient.get(`/post/${id}`));
+    return (await secureApiClient.get(`/post/${id}`));
 };
 
 export const getUser = async (id) => {
-    return (await apiClient.get(`/user/${id}`));
+    return (await defaultApiClient.get(`/user/${id}`));
 };
 
-export const getUserAvatar = async (path) => {
-    return (await apiClient.get(`/uploads/${path}`));
+export const getByTokenUser = async (data) => {
+    const accessToken = localStorage.getItem('accessToken');
+
+    return (accessToken) ? await secureApiClient.post('/getUser', data) : false;
 };
 
 export const updateUserRequest = async (data) => {
-    return (await apiClient.put(`/user/${data.id}`, data));
+    return (await secureApiClient.put(`/user/${data.id}`, data));
 };
 
 export const createPostRequest = async (data) => {
-    return (await apiClient.post('/post', data));
+    return (await secureApiClient.post('/post', data));
 };
 
 export const updatePostRequest = async (data) => {
-    return (await apiClient.put(`/post/${data.id}`, data));
+    return (await secureApiClient.put(`/post/${data.id}`, data));
 };
+
+export const deletePostRequest = async (data) => {
+    return (await secureApiClient.delete(`/post/${data.id}`, data));
+};
+
+export const loginRequest = async (data) => {
+    await defaultApiClient.post('/auth/login', data).then(response => {
+        localStorage.setItem('accessToken', response?.data.accessToken);
+    });
+
+    window.location.reload();
+};
+
+export const socialLoginRequest = async (data) => {
+    await defaultApiClient.post('/auth/social', data).then(response => {
+        localStorage.setItem('accessToken', response?.data.accessToken);
+    });
+
+    window.location.reload();
+};
+
+export const LogoutRequest = async () => {
+    const accessToken = localStorage.getItem('accessToken');
+
+    await secureApiClient.post('/auth/logout', {accessToken: accessToken});
+
+    localStorage.removeItem('accessToken');
+    window.location.reload();
+};
+
+

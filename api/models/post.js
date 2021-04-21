@@ -28,6 +28,10 @@ class Post {
             });
     }
 
+    static async deletePost(id) {
+        return db.select().from(this.tableName).where('id', '=', id).delete();
+    }
+
     static async getLastID() {
         return db.select('id').from(this.tableName);
     }

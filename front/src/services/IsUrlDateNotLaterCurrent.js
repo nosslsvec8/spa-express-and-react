@@ -1,3 +1,6 @@
+/**
+ * @return {boolean}
+ */
 function IsUrlDateNotLaterCurrent(path) {
     const currentDate = new Date();
     const relativePathSplit = path;

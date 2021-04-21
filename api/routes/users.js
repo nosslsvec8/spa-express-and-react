@@ -5,6 +5,11 @@ const checkAcl = require('../middleware/checkAcl');
 const checkAuth = passport.authenticate('jwt', {session: false});
 const validator = require('../middleware/validator');
 
+router.post("/getUser", [checkAuth, validator({
+    accessToken: ['required']
+}), async (req, res) => {
+    res.send(await User.findByToken(req.body.accessToken));
+}]);
 router.get("/user/:id", async (req, res) => {
     res.send(await User.findById(req.params.id));
 });
@@ -24,13 +29,13 @@ router.put("(/user/:id|/users/:id)", [checkAuth, checkAcl([
     {permission: "updateOwnUser", checkAuthor: true, table: User.tableName, column: 'id'}
 ]), validator({
     email: ['required', 'email', `unique:${User.tableName}:update`],
-    password: ['required', 'min:4', 'max:60'],
+    name: ['required', 'min:4', 'max:60'],
 }), async (req, res) => {
-    const user = await User.findById(req.params.id);
-    const newPassword = req.body.password;
-    if (user[0] !== undefined) {
+    const {id, email, name, phone, university} = req.body;
+    const user = await User.findById(id);
+    if (user.length !== 0) {
         try {
-            await User.updateUserPassword(user[0].id, newPassword);
+            await User.updateUser({id, email, name, phone, university});
             res.status(200).send('User password updated');
         } catch (error) {
             return res.status(400).send(`Updated error - ${error}`);
