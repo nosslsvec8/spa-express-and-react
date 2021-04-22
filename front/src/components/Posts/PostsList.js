@@ -5,9 +5,12 @@ import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Button from "@material-ui/core/Button";
-import PostAction from "../../components/Posts/PostActions";
 import Grid from "@material-ui/core/Grid";
 import {CurrentUserContext} from "../../containers/RenderContainer";
+import CommentsList from '../../containers/Comments/CommentsListContainer';
+import ActionMenu from "../ActionMenu";
+import PostEdit from "../../containers/Post/PostEditContainer";
+import PostDelete from "../../containers/Post/PostDeleteContainer";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -41,11 +44,11 @@ function PostsList({posts, isFetching, onLoadMore, countPosts}) {
         <Grid container spacing={5} className={classes.root}>
             {isFetching && 'Loading posts...'}
             {!isFetching &&
-            posts.map(({id, title, text, pictureLink}) => (
+            posts.map(({id, userId, title, text, pictureLink}) => (
                 <Grid item xs={9} key={id}>
                     <Paper className={classes.paper}>
-                        {id===currentUser.id &&
-                        <PostAction post={{id, title, text}}/>}
+                        {userId===currentUser.id &&
+                        <ActionMenu object={{id, text, userId}} ObjectEdit={PostEdit} ObjectDelete={PostDelete}/>}
                         <CardHeader title={title}/>
                         {pictureLink &&
                         <img
@@ -56,6 +59,7 @@ function PostsList({posts, isFetching, onLoadMore, countPosts}) {
                             <Typography variant="body1">{text}</Typography>
                         </CardContent>
                     </Paper>
+                    <CommentsList postId={id}/>
                 </Grid>
             ))}
             <Grid item xs={12}>

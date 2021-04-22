@@ -9,7 +9,6 @@ import BasicTextField from '../Fields/BasicTextField';
 import Cropper from 'react-cropper';
 import "cropperjs/dist/cropper.css";
 
-
 function PostCreate({onSubmit}) {
     const [isOpen, setIsOpen] = useState(false);
     const FILE_TYPES = ['image/jpeg'];

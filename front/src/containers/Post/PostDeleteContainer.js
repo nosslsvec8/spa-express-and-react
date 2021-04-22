@@ -3,7 +3,7 @@ import {useMutation} from 'react-query';
 import PostDelete from '../../components/Posts/PostDelete';
 import {deletePostRequest} from "../hooks/crud";
 
-function PostDeleteContainer({post}) {
+function PostDeleteContainer({object}) {
     const {mutate: deletePost} = useMutation(deletePostRequest);
 
     const onSubmit = useCallback(async formData => {
@@ -15,7 +15,7 @@ function PostDeleteContainer({post}) {
     }, [deletePost]);
 
     return (
-        <PostDelete post={post} onSubmit={onSubmit}/>
+        <PostDelete post={object} onSubmit={onSubmit}/>
     );
 }
 

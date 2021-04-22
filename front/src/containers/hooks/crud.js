@@ -63,4 +63,24 @@ export const LogoutRequest = async () => {
     window.location.reload();
 };
 
+export const getPostCommentsRequest = async (data) => {
+    return (await secureApiClient.get(`/comment/postId/${data.postId}`));
+};
+
+export const countCommentsRequest = async (data) => {
+    return (await defaultApiClient.get(`/comment/countComments/${data.postId}`));
+};
+
+export const createCommentRequest = async (data) => {
+    return (await secureApiClient.post('/comment/create', data));
+};
+
+export const updateCommentRequest = async (data) => {
+    return (await secureApiClient.put(`/comment/${data.id}`, data));
+};
+
+export const deleteCommentRequest = async (data) => {
+    return (await secureApiClient.delete(`/comment/${data.id}`, data));
+};
+
 

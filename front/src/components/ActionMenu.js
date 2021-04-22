@@ -3,11 +3,9 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-import PostEdit from "../../containers/Post/PostEditContainer";
-import PostDelete from "../../containers/Post/PostDeleteContainer";
-import './PostAction.css';
+import "./ActionMenu.css";
 
-function PostAction({post}) {
+function ActionMenu({object, ObjectEdit, ObjectDelete}) {
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const handleClick = (event) => {
@@ -19,7 +17,7 @@ function PostAction({post}) {
     };
 
     return (
-        <div className="postAction">
+        <div className="ActionMenu">
             <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
                 <MoreHorizIcon/>
             </Button>
@@ -32,10 +30,10 @@ function PostAction({post}) {
             >
                 <div>
                     <MenuItem onClick={handleClose}>
-                        <PostEdit post={post}/>
+                        <ObjectEdit object={object}/>
                     </MenuItem>
                     <MenuItem onClick={handleClose}>
-                        <PostDelete post={post}/>
+                        <ObjectDelete object={object}/>
                     </MenuItem>
                 </div>
             </Menu>
@@ -43,4 +41,4 @@ function PostAction({post}) {
     );
 }
 
-export default PostAction;
+export default ActionMenu;

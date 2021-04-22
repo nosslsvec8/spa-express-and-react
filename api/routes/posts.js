@@ -4,7 +4,6 @@ const Post = require('../models/post');
 const checkAcl = require('../middleware/checkAcl');
 const checkAuth = passport.authenticate('jwt', {session: false});
 const validator = require('../middleware/validator');
-const checkEmptyValue = require('../services/checkEmptyValue');
 const fs = require('fs');
 
 router.get("(/post/count|/posts/count)", async (req, res) => {
@@ -36,9 +35,6 @@ router.post('(/post|/posts)', [
 
         fs.writeFileSync(pictureFullLink, pictureCode, pictureEncoding);
 
-        checkEmptyValue(title.trim(), 'Title value cannot be empty');
-        checkEmptyValue(text.trim(), 'Text value cannot be empty');
-
         try {
             await Post.createPost(title, text, `${pictureLink}`);
             res.status(201).send('Post successfully created');
@@ -55,15 +51,23 @@ router.put("(/post/:id|/posts/:id)", [checkAuth, checkAcl([
     text: ['required', 'min:10'],
     id: ['required']
 }), async (req, res) => {
-    await Post.updatePostId(req.body.id, req.body);
-    res.status(200).send('Post successfully changed');
+    try {
+        await Post.updatePostId(req.body.id, req.body);
+        res.status(200).send('Post successfully changed');
+    } catch (error) {
+        res.status(400).send(`Update error - ${error}`);
+    }
 }]);
 router.delete("(/post/:id|/posts/:id)", [checkAuth, checkAcl([
     {permission: "deleteAnyPost"},
     {permission: "deleteOwnPost", checkAuthor: true, table: Post.tableName, column: 'userId'}
 ]), async (req, res) => {
-    await Post.deletePost(req.body.id);
-    res.status(200).send('Post successfully deleted');
+    try {
+        await Post.deletePost(req.body.id);
+        res.status(200).send('Post successfully deleted');
+    } catch (error) {
+        res.status(400).send(`Delete error - ${error}`);
+    }
 }]);
 
 module.exports = router;
