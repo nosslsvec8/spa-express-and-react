@@ -3,7 +3,7 @@ import {useMutation} from 'react-query';
 import PostEdit from '../../components/Posts/PostEdit';
 import {updatePostRequest} from "../hooks/crud";
 
-function PostEditContainer({post}) {
+function PostEditContainer({object}) {
     const {mutate: editPost} = useMutation(updatePostRequest);
 
     const onSubmit = useCallback(async formData => {
@@ -15,7 +15,7 @@ function PostEditContainer({post}) {
     }, [editPost]);
 
     return (
-        <PostEdit post={post} onSubmit={onSubmit}/>
+        <PostEdit post={object} onSubmit={onSubmit}/>
     );
 }
 

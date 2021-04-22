@@ -13,6 +13,11 @@ module.exports = function validator(validatorSchemaArr) {
                                 [fieldName]: `${fieldName} the field cannot be empty`
                             });
                         }
+                        if (typeof req.body[fieldName] === 'string' && req.body[fieldName].trim() === '') {
+                            errors.push({
+                                [fieldName]: `${fieldName} the field cannot be empty`
+                            });
+                        }
                         break;
                     case 'min':
                         if (req.body[fieldName]) {

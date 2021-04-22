@@ -2,7 +2,6 @@ const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const validator = require('../middleware/validator');
-const checkEmptyValue = require('../services/checkEmptyValue');
 const createJwtTokenStr = require('../services/createJwtTokenStr');
 const multer = require('multer');
 const fs = require('fs');
@@ -33,10 +32,6 @@ router.post('/auth/register', upload.single('avatar'), validator({
         return next(res.status(400).send(`Registration error - ${error}`));
     }
 
-    checkEmptyValue(email.trim(), 'Email value cannot be empty');
-    checkEmptyValue(password.trim(), 'Password value cannot be empty');
-    checkEmptyValue(name.trim(), 'Name value cannot be empty');
-
     const userInDb = await User.findByEmail(email.trim());
 
     if (userInDb.length !== 0) {
@@ -55,11 +50,6 @@ router.post('/auth/social', async (req, res) => {
     const {email, name, profilePicURL} = req.body._profile;
     const idSocialToken = req.body._token.idToken;
 
-    checkEmptyValue(email.trim(), 'Email value cannot be empty');
-    checkEmptyValue(name.trim(), 'Name value cannot be empty');
-    checkEmptyValue(profilePicURL.trim(), 'Picture url cannot be empty');
-    checkEmptyValue(idSocialToken.trim(), 'idSocialToken cannot be empty');
-
     const userInDb = await User.findByEmail(email.trim());
 
     if (userInDb.length === 0) {
@@ -71,7 +61,7 @@ router.post('/auth/social', async (req, res) => {
 
             await User.createUser(email, idSocialToken.substr(0, 80), name, pictureLink);
             const newUserInDb = await User.findByEmail(email.trim());
-            const token = createJwtTokenStr( newUserInDb[0].email, newUserInDb[0].id);
+            const token = createJwtTokenStr(newUserInDb[0].email, newUserInDb[0].id);
             await User.updateToken(newUserInDb[0].id, token);
 
             return res.send({accessToken: token});
@@ -91,9 +81,6 @@ router.post('/auth/login', validator({
     password: ['required']
 }), async (req, res) => {
     const {email, password} = req.body;
-
-    checkEmptyValue(email.trim(), 'Email value cannot be empty');
-    checkEmptyValue(password.trim(), 'Password value cannot be empty');
 
     const userInDb = await User.findByEmail(email.trim());
 
@@ -118,8 +105,6 @@ router.post('/auth/logout', [checkAuth, validator({
 }), async (req, res) => {
     const {accessToken} = req.body;
 
-    checkEmptyValue(accessToken.trim(), 'AccessToken value cannot be empty');
-
     const userInDb = await User.findByToken(accessToken);
 
     if (!userInDb) {
@@ -133,9 +118,6 @@ router.post('/auth/logout', [checkAuth, validator({
 router.post('/auth/isCheckAccessToken', [checkAuth, validator({
     accessToken: ['required']
 }), async (req, res) => {
-    const {accessToken} = req.body;
-    checkEmptyValue(accessToken.trim(), 'AccessToken value cannot be empty');
-
     return res.send(true);
 }]);
 

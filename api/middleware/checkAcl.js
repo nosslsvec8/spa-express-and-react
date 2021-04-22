@@ -1,9 +1,9 @@
 const db = require('../services/db');
 
 const allPermissionsArr = {
-    admin: ['listAnyPost', 'createPosts', 'updateAnyPost', 'deleteAnyPost', 'listAnyUser', 'createAnyUser', 'updateAnyUser', 'deleteAnyUser'],
+    admin: ['listAnyPost', 'createPosts', 'updateAnyPost', 'deleteAnyPost', 'listAnyUser', 'createAnyUser', 'updateAnyUser', 'deleteAnyUser', 'updateAnyComment', 'deleteAnyComment'],
     moderatorForPosts: ['listAnyPost', 'createPosts', 'updateAnyPost', 'deleteAnyPost', 'listAnyUser', 'updateOwnUser', 'deleteOwnUser'],
-    user: ['listAnyPost', 'createPosts', 'updateOwnPost', 'deleteOwnPost', 'listAnyUser', 'updateOwnUser', 'deleteOwnUser']
+    user: ['listAnyPost', 'createPosts', 'updateOwnPost', 'deleteOwnPost', 'listAnyUser', 'updateOwnUser', 'deleteOwnUser', 'updateOwnComment', 'deleteOwnComment']
 };
 
 module.exports = function (checkPermissionsArr) {
